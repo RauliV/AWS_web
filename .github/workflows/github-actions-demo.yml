@@ -36,5 +36,5 @@ jobs:
         with:
           context: ./Backend
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: 1aws2go/backend:latest
           labels: ${{ steps.meta.outputs.labels }}
