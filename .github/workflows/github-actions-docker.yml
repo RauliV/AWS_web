@@ -6,7 +6,7 @@ on:
       - closed
 
 jobs:
-  push_to_registery:
+  push_backend_to_registery:
     name: Push Docker image to Docker Hub
     if: github.event.pull_request.merged # Check if PR is merged
     runs-on: ubuntu-latest
@@ -19,17 +19,17 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: 1aws2go/backend
       
-      - name: Build and push Docker image
+      - name: Build and push backend Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: ./Backend
           push: true
           tags: 1aws2go/backend:latest
-          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push frontend Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./Frontend
+          push: true
+          tags: 1aws2go/frontend:latest
