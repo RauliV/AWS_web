@@ -103,3 +103,14 @@ Then, from within your project folder:
 npm run build
 surge public my-project.surge.sh
 ```
+
+# Running with docker
+Build docker image from Dockerfile
+```
+docker build -t svelte-app .
+```
+Run a container based on the image
+```
+docker run -d -p 8080:5000 svelte-app
+```
+Now the application should be reachable in http://localhost:8080
