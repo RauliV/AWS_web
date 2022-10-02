@@ -1,18 +1,20 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const port = 8080
 
 
 app.get('/', (req, res) => {
-  res.send('Good day, Sir!')
+  res.send('Good day, Sir!');
 })
 
 app.get('/list', (req, res) => {
+  console.log("/list called");
   let json_response = JSON.parse('{"packages":[{"name":"package1", "description": "This is package 1"},'+
   '{"name":"package2", "description": "This is package 2"}]}');
-
+  res.status(200)
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.json(json_response);
-
 })
 
 app.listen(port, () => {
