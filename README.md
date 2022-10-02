@@ -4,7 +4,7 @@ GitHub Repository for the Web Development proportion of this project
 # Docker compose run
 Application starts with:
 ```
-docker compose up
+docker-compose up -d --build
 ```
 
 Backend is left open, for now.
