@@ -57,7 +57,6 @@
 
   let logMessages = [];
   logMessage("Initialized frontend");
-
 </script>
 
 <h1>One AWS to go, Please!</h1>
