@@ -9,5 +9,5 @@ docker compose up
 
 Backend is left open, for now.
 
-Frontend can be reached in: http://localhost:5000
-Backend can be reached in: http://localhost:8080
+Frontend can be reached in: http://localhost
+Backend can be reached in: http://localhost/api

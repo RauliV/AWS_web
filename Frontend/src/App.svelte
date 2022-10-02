@@ -26,7 +26,7 @@
 	
 	function startNewEnvironment() {
 		logMessage("Starting new environment")
-		const response = fetch('http://localhost:8080/list')
+		const response = fetch('http://' + window.location.hostname +':80/api/list')
 			.then(response => response.json())
 			.then(data => {
 				console.log(data);

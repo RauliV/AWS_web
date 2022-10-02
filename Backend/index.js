@@ -7,7 +7,7 @@ app.get('/', (req, res) => {
   res.send('Good day, Sir!');
 })
 
-app.get('/list', (req, res) => {
+app.get('/api/list', (req, res) => {
   console.log("/list called");
   let json_response = JSON.parse('{"packages":[{"name":"package1", "description": "This is package 1"},'+
   '{"name":"package2", "description": "This is package 2"}]}');

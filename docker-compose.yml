@@ -1,11 +1,19 @@
 version: "3"
 services:
+  reverseproxy:
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - 80:8080
+    networks:
+      - mynetwork
+    restart: always
+
   frontend:
     build:
       dockerfile: Dockerfile
       context: ./Frontend
-    ports:
-      - "5000:5000"
     depends_on:
       - backend
     networks:
@@ -15,11 +23,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./Backend
-    ports:
-      - "8080:8080"
     networks:
       - mynetwork
 
 networks:
   mynetwork:
-    driver: bridge
