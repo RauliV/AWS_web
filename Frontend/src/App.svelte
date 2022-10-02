@@ -20,7 +20,7 @@
 
   function startNewEnvironment() {
     logMessage("Starting new environment");
-    const path = "http://localhost:8080/list";
+    const path = "http://" + window.location.hostname + ":80/api/list";
 
     const response = fetch(path)
       .then((response) => response.json())
