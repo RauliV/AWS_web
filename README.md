@@ -9,8 +9,5 @@ docker compose up
 
 Backend is left open, for now.
 
-Frontend can be reached in: http://localhost
-Backend can be reached in: http://localhost:8001
-
-To send request from **front** to **back** use this URL: http://backend:3000
-To send request from **back** to **front** use this URL: http://frontend:5000
+Frontend can be reached in: http://localhost:5000
+Backend can be reached in: http://localhost:8080
