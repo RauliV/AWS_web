@@ -1,4 +1,4 @@
-const express = require('express')
+import express from 'express'
 const app = express()
 const port = 8080
 
@@ -8,7 +8,6 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/list', (req, res) => {
-  console.log("/list called");
   let json_response = JSON.parse('{"packages":[{"name":"package1", "description": "This is package 1"},'+
   '{"name":"package2", "description": "This is package 2"}]}');
   res.status(200)
@@ -20,3 +19,5 @@ app.get('/api/list', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+export default app;
