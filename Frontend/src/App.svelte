@@ -39,6 +39,13 @@
       });
   }
 
+  function returnToMain() {
+    logMessage("Returned to main view from package selection screen");
+    availablePackages = [];
+    selectedPackage = null;
+    currentView = Views.Main;
+  }
+
   function buildEnvironment() {
     logMessage("(NOT IMPLEMENTED) Sent build request to backend");
     selectedPackage = null;
@@ -93,6 +100,8 @@
 
     <button on:click={buildEnvironment}> Build </button>
   {/if}
+
+  <button on:click={returnToMain}> Return </button>
 {/if}
 
 <style>
