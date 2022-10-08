@@ -2,13 +2,13 @@ import dotenv from "dotenv"
 
 // This configures the GIT_TOKEN from .env file in the root of the repo.
 // When run in docker compose, there is no need for the configuration.
-if (!process.env.GIT_TOKEN) {
+if (!process.env.AWS_GIT_TOKEN) {
     dotenv.config()
     console.log("Dotenv config done")
 }
 
 const gitUrl = "https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud"
-const token = process.env.GIT_TOKEN
+const token = process.env.AWS_GIT_TOKEN
 
 const headers = {
     "Accept": "application/vnd.github+json",

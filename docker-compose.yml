@@ -26,7 +26,7 @@ services:
     networks:
       - mynetwork
     environment:
-      GIT_TOKEN: $GIT_TOKEN
+      AWS_GIT_TOKEN: $AWS_GIT_TOKEN
 
 networks:
   mynetwork:
