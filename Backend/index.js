@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/list', async (req, res) => {
   let json_response = await templateData();
-  res.status(200)
+  res.status(json_response.status)
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.json(json_response);
