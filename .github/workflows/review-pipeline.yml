@@ -11,9 +11,14 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Create .env file
+        run: |
+          touch .env
+          echo AWS_GIT_TOKEN=${{ secrets.AWS_GIT_TOKEN }} >> .env
+          echo AWS_GIT_TOKEN=${{ secrets.AWS_GIT_TOKEN }} >> Backend/.env
       - name: Install dependencies
         working-directory: ./Backend
         run: npm install 

@@ -1,4 +1,6 @@
 import express from 'express'
+import { templateData } from './github.js'
+
 const app = express()
 const port = 8080
 
@@ -7,10 +9,9 @@ app.get('/', (req, res) => {
   res.send('Good day, Sir!');
 })
 
-app.get('/api/list', (req, res) => {
-  let json_response = JSON.parse('{"packages":[{"name":"package1", "description": "This is package 1"},'+
-  '{"name":"package2", "description": "This is package 2"}]}');
-  res.status(200)
+app.get('/api/list', async (req, res) => {
+  let json_response = await templateData();
+  res.status(json_response.status)
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.json(json_response);

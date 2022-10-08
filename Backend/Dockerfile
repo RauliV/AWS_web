@@ -1,5 +1,5 @@
 # TODO: Check if node version OK
-FROM node:16
+FROM node:18
 
 WORKDIR /usr/src/app
 

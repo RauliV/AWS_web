@@ -25,6 +25,8 @@ services:
       context: ./Backend
     networks:
       - mynetwork
+    environment:
+      AWS_GIT_TOKEN: $AWS_GIT_TOKEN
 
 networks:
   mynetwork:
