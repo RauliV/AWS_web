@@ -4,8 +4,8 @@ run-name: ${{ github.ref_name }} review pipeline
 on: [push]
 
 jobs:
-  Review-pipeline:
-    name: Review pipeline
+  Unit-tests:
+    name: Unit tests
     runs-on: ubuntu-latest
     steps:
       - name: Install Node
@@ -22,9 +22,13 @@ jobs:
         working-directory: ./Backend
         run: npm test
 
-      - name: Test Reporter
-        uses: dorny/test-reporter@v1.5.0
+      #- name: Test Reporter
+      #  uses: dorny/test-reporter@v1.5.0
 
+  Test-coverage:
+    name: Test coverage
+    runs-on: ubuntu-latest
+    steps:
       - name: Publish to coveralls.io
         uses: coverallsapp/github-action@v1.1.2
         with:
