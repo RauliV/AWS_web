@@ -25,6 +25,8 @@ services:
       context: ./Backend
     networks:
       - mynetwork
+    environment:
+      GIT_TOKEN: $GIT_TOKEN
 
 networks:
   mynetwork:

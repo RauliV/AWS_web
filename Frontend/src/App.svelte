@@ -28,7 +28,7 @@
         logMessage("Available package data fetched from backend");
         availablePackages = [];
         selectedPackage = null;
-        availablePackages = Array.from(data.packages);
+        availablePackages = Array.from(data.templates);
         currentView = Views.PackageSelection;
       })
       .catch((error) => {
