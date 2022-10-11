@@ -1,4 +1,5 @@
 import dotenv from "dotenv"
+import fetch from 'node-fetch'
 
 // This configures the GIT_TOKEN from .env file in the root of the repo.
 // When run in docker compose, there is no need for the configuration.
