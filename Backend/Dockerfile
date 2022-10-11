@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["node", "--no-experimental-fetch", "index.js"];
+CMD ["node", "index.js"]
