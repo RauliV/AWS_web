@@ -7,10 +7,6 @@
   let currentView = Views.Login;
 
   let availablePackages = [];
-
-  console.log(availablePackages);
-  console.log(typeof availablePackages);
-
   let selectedPackage = null;
 
   function processLogin() {
@@ -46,8 +42,27 @@
     currentView = Views.Main;
   }
 
-  function buildEnvironment() {
-    logMessage("(NOT IMPLEMENTED) Sent build request to backend");
+  async function sendBuildRequest() {
+    const path = "http://" + window.location.hostname + ":80/api/build";
+
+    let buildOptions = {
+      package: selectedPackage.name,
+      parameters: [],
+    };
+
+    console.log(JSON.stringify(buildOptions));
+
+    const res = await fetch(path, {
+      method: "POST",
+      body: JSON.stringify(buildOptions),
+    });
+
+    logMessage("Sent build request to backend");
+
+    //const json = await res.json();
+    //let result = await JSON.stringify(json);
+    // logMessage("Received response from backend: " + {result});
+
     selectedPackage = null;
     currentView = Views.Main;
   }
@@ -98,7 +113,7 @@
     <h2>Selected package: {selectedPackage.name}</h2>
     {selectedPackage.description}
 
-    <button on:click={buildEnvironment}> Build </button>
+    <button on:click={sendBuildRequest}> Build </button>
   {/if}
 
   <button on:click={returnToMain}> Return </button>
