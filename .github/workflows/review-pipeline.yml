@@ -26,3 +26,22 @@ jobs:
       - name: Run tests
         working-directory: ./Backend
         run: npm test
+
+  Analyze:
+      name: Analyze
+      runs-on: ubuntu-latest
+
+      strategy:
+        fail-fast: false
+        matrix:
+          language: [ 'javascript' ]
+
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Initialize CodeQL
+          uses: github/codeql-action/init@v2
+
+        - name: Perform CodeQL Analysis
+          uses: github/codeql-action/analyze@v2
