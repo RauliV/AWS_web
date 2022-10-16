@@ -12,6 +12,7 @@ describe('GET /', function() {
 
 describe('GET /api/list', function() {
 	it('List all packages', function(done) {
+		this.timeout(5000)
 		request(app).get('/api/list')
 		.expect('Content-Type', /json/)
 		.expect(200, done);
