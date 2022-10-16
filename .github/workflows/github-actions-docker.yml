@@ -25,18 +25,18 @@ jobs:
         with:
           context: ./Backend
           push: true
-          tags: 1aws2go/backend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/backend:${{ github.ref_name }}, ${{ secrets.DOCKER_USERNAME }}/backend:latest
 
       - name: Build and push frontend Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: ./Frontend
           push: true
-          tags: 1aws2go/frontend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/frontend:${{ github.ref_name }}, ${{ secrets.DOCKER_USERNAME }}/frontend:latest
                 
       - name: Build and push nginx Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: ./nginx
           push: true
-          tags: 1aws2go/rproxy:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/rproxy:${{ github.ref_name }}, ${{ secrets.DOCKER_USERNAME }}/rproxy:latest
