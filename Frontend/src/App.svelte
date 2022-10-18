@@ -8,6 +8,8 @@
 
   let availablePackages = [];
 
+  let log = "";
+
   console.log(availablePackages);
   console.log(typeof availablePackages);
 
@@ -53,13 +55,8 @@
   }
 
   function logMessage(message) {
-    logMessages.push(new Date(Date.now()) + " - " + message);
-    logMessages = logMessages;
-
-    if (logMessages.length > 20) {
-      logMessages.splice(0, 1);
-      logMessages = logMessages;
-    }
+		var newMessage = new Date(Date.now()) + " - " + message + "\n";
+		log = log + newMessage;
   }
 
   let logMessages = [];
@@ -76,11 +73,8 @@
   <button on:click={startNewEnvironment}> Start new environment </button>
 
   <h2>Log</h2>
-  <ul class="no-bullets">
-    {#each logMessages as logMessage}
-      <li>{logMessage}</li>
-    {/each}
-  </ul>
+  <textarea readonly bind:value={log}></textarea>
+
 {/if}
 
 {#if currentView == Views.PackageSelection}
@@ -105,14 +99,15 @@
 {/if}
 
 <style>
-  ul.no-bullets {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
-
   :global(body) {
     background-color: #2b2b2b;
     color: #d6d6d6;
   }
+
+  textarea {
+    overflow-y: scroll;
+    height: 200px;
+		width: 600px;
+    resize: none;
+	}
 </style>
