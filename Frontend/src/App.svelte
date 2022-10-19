@@ -50,18 +50,20 @@
       parameters: [],
     };
 
-    console.log(JSON.stringify(buildOptions));
-
     const res = await fetch(path, {
       method: "POST",
       body: JSON.stringify(buildOptions),
+      headers: { "Content-Type": "application/json" },
     });
 
     logMessage("Sent build request to backend");
-
-    //const json = await res.json();
-    //let result = await JSON.stringify(json);
-    // logMessage("Received response from backend: " + {result});
+    if (res.status == 200) {
+      const json = await res.json();
+      let result = JSON.stringify(json);
+      logMessage("Received response from backend: " + result);
+    } else {
+      logMessage("Backend reported status: " + res.status);
+    }
 
     selectedPackage = null;
     currentView = Views.Main;
