@@ -1,4 +1,4 @@
-import chai from "chai"
+/* eslint-disable no-undef */
 import app from "../index.js"
 import request from "supertest"
 
