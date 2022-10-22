@@ -4,8 +4,8 @@ run-name: ${{ github.ref_name }} review pipeline
 on: [push]
 
 jobs:
-  Unit-tests:
-    name: Unit tests
+  Review-pipeline:
+    name: Review pipeline
     runs-on: ubuntu-latest
     steps:
       - name: Install Node
@@ -26,48 +26,3 @@ jobs:
       - name: Run tests
         working-directory: ./Backend
         run: npm test
-
-  Analyze:
-      name: Analyze
-      runs-on: ubuntu-latest
-
-      strategy:
-        fail-fast: false
-        matrix:
-          language: [ 'javascript' ]
-
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v3
-
-        - name: Initialize CodeQL
-          uses: github/codeql-action/init@v2
-
-        - name: Perform CodeQL Analysis
-          uses: github/codeql-action/analyze@v2
-
-  Static-code-analysis:
-    name: eslint
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        lint-task: ['eslint . --format json --output-file eslint_report.json bin lib']
-    steps:
-    - name: Git clone the repository
-      uses: actions/checkout@v1
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - name: eslint
-      run: npx ${{ matrix.lint-task }}
-    - name: Annotate Code Linting Results
-      uses: ataylorme/eslint-annotate-action@v2
-      if: always()
-      with:
-        repo-token: '${{ secrets.GITHUB_TOKEN }}'
-        report-json: 'eslint_report.json'
-    - name: Upload ESLint report
-      uses: actions/upload-artifact@v2
-      with:
-        name: eslint_report.json
-        path: ./eslint_report.json
