@@ -8,6 +8,8 @@
 
   let availablePackages = [];
 
+  let log = "";
+
   console.log(availablePackages);
   console.log(typeof availablePackages);
 
@@ -53,66 +55,89 @@
   }
 
   function logMessage(message) {
-    logMessages.push(new Date(Date.now()) + " - " + message);
-    logMessages = logMessages;
-
-    if (logMessages.length > 20) {
-      logMessages.splice(0, 1);
-      logMessages = logMessages;
-    }
+		var newMessage = new Date(Date.now()) + " - " + message + "\n";
+		log = log + newMessage;
   }
 
-  let logMessages = [];
   logMessage("Initialized frontend");
 </script>
 
 <h1>One AWS to go, Please!</h1>
 
 {#if currentView == Views.Login}
-  <button on:click={processLogin}> Login </button>
+  <button class="login-button" on:click={processLogin}> Login </button>
 {/if}
 
-{#if currentView == Views.Main}
-  <button on:click={startNewEnvironment}> Start new environment </button>
+<div class="grid-container">
 
-  <h2>Log</h2>
-  <ul class="no-bullets">
-    {#each logMessages as logMessage}
-      <li>{logMessage}</li>
-    {/each}
-  </ul>
-{/if}
-
-{#if currentView == Views.PackageSelection}
-  <h2>Available packages</h2>
-
-  <select single bind:value={selectedPackage}>
-    {#each availablePackages as pkg}
-      <option value={pkg}>
-        {pkg.name}
-      </option>
-    {/each}
-  </select>
-
-  {#if selectedPackage}
-    <h2>Selected package: {selectedPackage.name}</h2>
-    {selectedPackage.description}
-
-    <button on:click={buildEnvironment}> Build </button>
+  {#if currentView == Views.Main}
+    <button class="start-button" on:click={startNewEnvironment}> Start new environment </button>
+	
+		<h2 class="log-header">Log</h2>
+		<textarea readonly bind:value={log}></textarea>
   {/if}
 
-  <button on:click={returnToMain}> Return </button>
-{/if}
+  {#if currentView == Views.PackageSelection}
+    <h2>Available packages</h2>
+
+    <select single bind:value={selectedPackage}>
+      {#each availablePackages as pkg}
+        <option value={pkg}>
+          {pkg.name}
+        </option>
+      {/each}
+    </select>
+
+    {#if selectedPackage}
+      <h2>Selected package: {selectedPackage.name}</h2>
+      {selectedPackage.description}
+
+      <button on:click={buildEnvironment}> Build </button>
+    {/if}
+
+    <button on:click={returnToMain}> Return </button>
+  {/if}
+
+</div>
 
 <style>
-  ul.no-bullets {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
-
   :global(body) {
     background-color: #2b2b2b;
     color: #d6d6d6;
   }
+
+  h1 {
+  	text-align: center;
+	}
+	
+	.login-button {
+		display: block;
+    margin-left: auto;
+    margin-right: auto;
+	}
+
+  textarea {
+		grid-column: 3;
+    overflow-y: auto;
+    height: 500px;
+    resize: none;
+		outline: 0px solid transparent !important;
+	}
+	
+	.grid-container {
+		display: grid;
+		grid: 45% auto 45%;
+		column-gap: 50px;
+  	column-gap: 50px;
+	}
+	
+	.log-header {
+		grid-area: 1 / 3;
+	}
+	
+	.start-button {
+		grid-column: 1;
+		margin: 20px;
+	}
+	
 </style>
