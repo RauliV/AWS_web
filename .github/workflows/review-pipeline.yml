@@ -55,11 +55,9 @@ jobs:
     steps:
     - name: Git clone the repository
       uses: actions/checkout@v1
-    - uses: actions/setup-node@v2
+    - uses: actions/setup-node@v3
       with:
-        node-version: "14"
-    - name: yarn install
-      run: yarn install
+        node-version: 18
     - name: eslint
       run: npx ${{ matrix.lint-task }}
     - name: Annotate Code Linting Results
