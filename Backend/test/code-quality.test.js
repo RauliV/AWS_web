@@ -25,7 +25,7 @@ var options = {
   strict: true,  // Defaults to `false`, only notify the warnings
 
   // Specify the mocha context in which to run tests
-  contextName: 'eslint',  // Defaults to `eslint`, but can be any string
+  contextName: 'Code quality analysis',  // Defaults to `eslint`, but can be any string
 };
 
 // Run the tests
