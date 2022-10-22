@@ -2,6 +2,16 @@ import express from 'express'
 import { templateData } from './github.js'
 import fetch from 'node-fetch'
 
+if (!process.env.AWS_GIT_TOKEN) {
+  dotenv.config()
+  console.log("Dotenv config done")
+}
+
+const token = process.env.AWS_GIT_TOKEN
+
+//url for triggering action
+const gitBuildUrl = "https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/github-actions-aws-cdk-deploy.yml/dispatches";
+
 const app = express()
 const port = 8080
 app.use(express.json());
@@ -22,26 +32,29 @@ app.post('/api/build', async (req, res) => {
   const json = req.body;
   const packageName = json.package;
   const packageParams = json.parameters;
-  //url for triggering action
-  let gitUrl = "https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/github-actions-aws-cdk-deploy.yml/dispatches";
-  /*
-  options = {
-    method: "post",
-    headers: {},
-    ref: packageName,
-    inputs: {
-       AWS_ACCESS_KEY_ID: "",
-       AWS_SECRET_ACCESS_KEY: "",
-       AWS_REGION: ""
-    }
-  }
-  let response = await fetch(gitUrl, options); 
-  */
 
-  res.status(200)
+  let options = {
+    method: "post",
+    headers: {
+      "Accept": "application/vnd.github+json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({
+      ref: packageName,
+      inputs: packageParams
+    })
+  }
+
+  let response = await fetch(gitBuildUrl, options); 
+  
+  if (response.status == 204) {
+    res.status(200)
+  } else {
+    res.status(response.status)
+  }
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.json("(PLACEHOLDER) Building " + packageName);
+  res.json("(PLACEHOLDER) Building " + packageName + " - Status: " + response.status);
 });
 
 app.listen(port, () => {
