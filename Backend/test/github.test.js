@@ -1,13 +1,13 @@
 import chai from "chai"
 import sinon from "sinon"
 import assert from "assert"
-import { factory } from "../github.js"
+import { gitFactory } from "../github.js"
 import { githubResponses } from "./responses/github-responses.js"
 
-var expect = chai.expect
+const expect = chai.expect
 
 
-var sandbox = sinon.createSandbox()
+let sandbox = sinon.createSandbox()
 
 describe("GitHub calls", function() {    
     afterEach(() => {
@@ -15,12 +15,12 @@ describe("GitHub calls", function() {
     })
 
 	it("should return all template data", async function() {
-        let stub = sandbox.stub(factory, 'getBranches').returns(githubResponses.OkBranchesResponse)
-        let stub2 = sandbox.stub(factory, 'getBranchDesc')
+        let stub = sandbox.stub(gitFactory, 'getBranches').returns(githubResponses.OkBranchesResponse)
+        let stub2 = sandbox.stub(gitFactory, 'getBranchDesc')
             .onFirstCall().returns(githubResponses.OkBranchDesc1)
             .onSecondCall().returns(githubResponses.OkBranchDesc2)
 
-		const response = await factory.templateData()
+		const response = await gitFactory.templateData()
         
         assert(stub.calledOnce)
         assert(stub2.calledTwice)
@@ -34,8 +34,8 @@ describe("GitHub calls", function() {
         }
 	})
     it("should return proper response data when GET branches call fails", async function(){
-        let stub = sandbox.stub(factory, 'getBranches').returns(githubResponses.notOkBranchesResponse)
-        const response = await factory.templateData()
+        let stub = sandbox.stub(gitFactory, 'getBranches').returns(githubResponses.notOkBranchesResponse)
+        const response = await gitFactory.templateData()
 
         assert(stub.calledOnce)
         expect(response).keys("body", "status", "statusText", "templates")
@@ -44,12 +44,12 @@ describe("GitHub calls", function() {
         expect(response.templates.length).equal(0)
     })
     it("should return proper response data when GET branch description call fails", async function(){
-        let stub = sandbox.stub(factory, 'getBranches').returns(githubResponses.OkBranchesResponse)
-        let stub2 = sandbox.stub(factory, 'getBranchDesc')
+        let stub = sandbox.stub(gitFactory, 'getBranches').returns(githubResponses.OkBranchesResponse)
+        let stub2 = sandbox.stub(gitFactory, 'getBranchDesc')
             .onFirstCall().returns(githubResponses.NotOkBranchDesc)
             .onSecondCall().returns(githubResponses.OkBranchDesc1)
 
-        const response = await factory.templateData()
+        const response = await gitFactory.templateData()
 
         expect(response).keys("body", "status", "statusText", "templates")
         expect(response.status).equal(404)
@@ -58,12 +58,12 @@ describe("GitHub calls", function() {
 
         // 2nd test for when second description fetch fails
         sandbox.restore()
-        let stub3 = sandbox.stub(factory, 'getBranches').returns(githubResponses.OkBranchesResponse)
-        let stub4 = sandbox.stub(factory, 'getBranchDesc')
+        let stub3 = sandbox.stub(gitFactory, 'getBranches').returns(githubResponses.OkBranchesResponse)
+        let stub4 = sandbox.stub(gitFactory, 'getBranchDesc')
             .onFirstCall().returns(githubResponses.OkBranchDesc1)
             .onSecondCall().returns(githubResponses.NotOkBranchDesc)
 
-        const response2 = await factory.templateData()
+        const response2 = await gitFactory.templateData()
 
         expect(response2).keys("body", "status", "statusText", "templates")
         expect(response2.status).equal(404)
@@ -71,7 +71,7 @@ describe("GitHub calls", function() {
         expect(response2.templates.length).equal(1)
     })
     it("should return only branches that are templates", function() {
-        const templates = factory.parseTemplates([{"name":"TEMPLATE-Test1"}, {"name": "34-fix-something"}, {"name": "TEMPLATE-Test2"}])
+        const templates = gitFactory.parseTemplates([{"name":"TEMPLATE-Test1"}, {"name": "34-fix-something"}, {"name": "TEMPLATE-Test2"}])
 
         expect(templates, ["TEMPLATE-Test1", "TEMPLATE-Test2"])
     })

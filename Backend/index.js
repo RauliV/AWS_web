@@ -1,6 +1,6 @@
 import express from 'express'
-import { templateData } from './github.js'
-import fetch from 'node-fetch'
+import { gitFactory } from './github.js'
+import 'node-fetch'
 
 if (!process.env.AWS_GIT_TOKEN) {
   dotenv.config()
@@ -21,12 +21,17 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/list', async (req, res) => {
-  let json_response = await templateData();
+  let json_response = await gitFactory.templateData();
   res.status(json_response.status)
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.json(json_response);
 })
+
+async function triggerBuild(options) {
+  let response = await fetch(gitBuildUrl, options)
+  return response
+}
 
 app.post('/api/build', async (req, res) => {
   const json = req.body;
@@ -44,9 +49,8 @@ app.post('/api/build', async (req, res) => {
       inputs: packageParams
     })
   }
-
-  let response = await fetch(gitBuildUrl, options); 
   
+  let response = await indexFactory.triggerBuild(options); 
   if (response.status == 204) {
     res.status(200)
   } else {
@@ -62,3 +66,7 @@ app.listen(port, () => {
 })
 
 export default app;
+
+export const indexFactory = {
+  triggerBuild
+}

@@ -49,7 +49,7 @@
         AWS_ACCESS_KEY_ID: "Placeholder AWS_ACCESS_KEY_ID",
         AWS_SECRET_ACCESS_KEY: "Placeholder AWS_SECRET_ACCESS_KEY", // We need to figure a secure way to handle this
         AWS_REGION: "Placeholder AWS_REGION"
-      }
+    };
 
     let buildOptions = {
       package: selectedPackage.name,
