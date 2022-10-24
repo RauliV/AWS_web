@@ -1,5 +1,5 @@
 import express from 'express';
-import { addLogLine } from './log';
+import { addLogLine } from './log.js';
 const app = express();
 const port = 8080;
 
@@ -21,12 +21,11 @@ app.listen(port, () => {
 })
 
 //Function to test calling function data
-async function callAddLogLine(){
-  for (let i = 0; i < 3;i++){
-    await addLogLine('userId', 'myDescribtion');
+/*async function callAddLogLine(){
+  for (let i = 0; i < 220;i++){
+    await addLogLine('userId', 'myDescribtion ' + i);
   }
 }
-
-await callAddLogLine();
+await callAddLogLine();*/
 
 export default app;
