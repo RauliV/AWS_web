@@ -8,6 +8,7 @@
 
   let availablePackages = [];
   let selectedPackage = null;
+  let secretkey = null;
 
   function processLogin() {
     logMessage("Entered main view from login screen");
@@ -47,7 +48,7 @@
 
     let buildParameters = {
         AWS_ACCESS_KEY_ID: "Placeholder AWS_ACCESS_KEY_ID",
-        AWS_SECRET_ACCESS_KEY: "Placeholder AWS_SECRET_ACCESS_KEY", // We need to figure a secure way to handle this
+        AWS_SECRET_ACCESS_KEY: secretkey, // We need to figure a secure way to handle this
         AWS_REGION: "Placeholder AWS_REGION"
     };
 
@@ -120,6 +121,8 @@
   {#if selectedPackage}
     <h2>Selected package: {selectedPackage.name}</h2>
     {selectedPackage.description}
+
+		<input type=password bind:value={secretkey}/>
 
     <button on:click={sendBuildRequest}> Build </button>
   {/if}
