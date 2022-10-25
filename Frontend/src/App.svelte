@@ -8,7 +8,11 @@
 
   let availablePackages = [];
   let selectedPackage = null;
+	
+	// The build parameters.
   let secretkey = null;
+	let accesskey = null;
+	let region = null;
 
   function processLogin() {
     logMessage("Entered main view from login screen");
@@ -41,15 +45,20 @@
     availablePackages = [];
     selectedPackage = null;
     currentView = Views.Main;
+		
+	let secretkey = null;
+	let accesskey = null;
+	let region = null;
+		
   }
 
   async function sendBuildRequest() {
     const path = "http://" + window.location.hostname + ":80/api/build";
 
     let buildParameters = {
-        AWS_ACCESS_KEY_ID: "Placeholder AWS_ACCESS_KEY_ID",
+        AWS_ACCESS_KEY_ID: accesskey,
         AWS_SECRET_ACCESS_KEY: secretkey, // We need to figure a secure way to handle this
-        AWS_REGION: "Placeholder AWS_REGION"
+        AWS_REGION: region
     };
 
     let buildOptions = {
@@ -122,9 +131,25 @@
     <h2>Selected package: {selectedPackage.name}</h2>
     {selectedPackage.description}
 
-		<input type=password bind:value={secretkey}/>
+	<div>
+		Access key id:
+		<input bind:value={accesskey}/>
+	</div>
 
-    <button on:click={sendBuildRequest}> Build </button>
+	<div>
+		Region:
+		<input bind:value={region}/>
+	</div>
+
+	<div>
+		Secret key:
+		<input type=password bind:value={secretkey}/>
+	</div>
+
+	{#if accesskey && region && secretkey}
+    	<button on:click={sendBuildRequest}> Build </button>
+	{/if}
+
   {/if}
 
   <button on:click={returnToMain}> Return </button>
