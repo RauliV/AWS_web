@@ -51,8 +51,8 @@ describe('POST /api/build', async function() {
 		let fetchStub = sandbox.stub(indexFactory, "triggerBuild").resolves({status: 204})
 		let packageName = "TEMPLATE-EC2"
 		let buildOptions = {
-		  package: packageName,
-		  parameters: buildParameters,
+			package: packageName,
+			parameters: buildParameters,
 		};
 
 		let response = await request(app).post("/api/build").send(buildOptions)

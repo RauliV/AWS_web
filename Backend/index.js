@@ -1,4 +1,5 @@
 import express from 'express';
+import dotenv from "dotenv"
 import { addLogLine } from './log.js';
 import { gitFactory } from './github.js'
 import 'node-fetch'
