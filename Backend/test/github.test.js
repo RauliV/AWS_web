@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import chai from "chai"
 import sinon from "sinon"
 import assert from "assert"
@@ -51,6 +52,9 @@ describe("GitHub calls", function() {
 
         const response = await gitFactory.templateData()
 
+        assert(stub.calledOnce)
+        assert(stub2.calledOnce)
+
         expect(response).keys("body", "status", "statusText", "templates")
         expect(response.status).equal(404)
         expect(response.statusText).equal('Not Found')
@@ -64,6 +68,9 @@ describe("GitHub calls", function() {
             .onSecondCall().returns(githubResponses.NotOkBranchDesc)
 
         const response2 = await gitFactory.templateData()
+
+        assert(stub3.calledOnce)
+        assert(stub4.calledTwice)
 
         expect(response2).keys("body", "status", "statusText", "templates")
         expect(response2.status).equal(404)

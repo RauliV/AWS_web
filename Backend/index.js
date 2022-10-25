@@ -1,4 +1,5 @@
-import express from 'express'
+import express from 'express';
+import { addLogLine } from './log.js';
 import { gitFactory } from './github.js'
 import 'node-fetch'
 
@@ -17,6 +18,7 @@ const port = 8080
 app.use(express.json());
 
 app.get('/', (req, res) => {
+  addLogLine("Sir", "Good day");
   res.send('Good day, Sir!');
 })
 
