@@ -1,11 +1,12 @@
-import express from 'express'
+import express from 'express';
+import { addLogLine } from './log.js';
 import { templateData } from './github.js'
 
-const app = express()
-const port = 8080
-
+const app = express();
+const port = 8080;
 
 app.get('/', (req, res) => {
+  addLogLine("Sir", "Good day");
   res.send('Good day, Sir!');
 })
 
