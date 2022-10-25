@@ -1,4 +1,4 @@
-import chai from "chai"
+/* eslint-disable no-undef */
 import app from "../index.js"
 import request from "supertest"
 
@@ -12,6 +12,7 @@ describe('GET /', function() {
 
 describe('GET /api/list', function() {
 	it('List all packages', function(done) {
+		this.timeout(5000)
 		request(app).get('/api/list')
 		.expect('Content-Type', /json/)
 		.expect(200, done);
