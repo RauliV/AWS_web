@@ -6,6 +6,7 @@ const app = express();
 const port = 8080;
 
 app.get('/', (req, res) => {
+  addLogLine("Sir", "Good day");
   res.send('Good day, Sir!');
 })
 
