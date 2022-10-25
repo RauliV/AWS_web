@@ -1,6 +1,5 @@
 import { promises as fs } from "fs";
 import callerId from 'caller-id';
-import { waitForDebugger } from "inspector";
 
 /**
  * This function adds a log line to a logFile. If directory or file doesn't exsist,
@@ -62,15 +61,15 @@ export async function addLogLine(userId =' -', description = '-'){
       })
       await fs.appendFile(logFile, newLines, function(error) {
         if (error) {
-          console.log(err);
+          console.log(error);
         }
       });
     }
     else {
       lines.push('/n' + newLog);
       await fs.appendFile(logFile, '\n' + newLog, function(error) {
-        if (err) {
-          console.log(err);
+        if (error) {
+          console.log(error);
         }
       });  
     }
