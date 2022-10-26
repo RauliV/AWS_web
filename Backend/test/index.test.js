@@ -83,7 +83,7 @@ describe('POST /api/build', async function() {
 				expect(response.headers).to.include.keys(["content-type", "access-control-allow-origin"])
 				expect(response.headers["content-type"]).to.include("application/json")
 				expect(response.headers["access-control-allow-origin"]).equal("*")
-				expect(response.body).equal("(PLACEHOLDER) Building " + packageName + " - Status: " + response.status)
+				expect(response.body).equal("(PLACEHOLDER) Building " + packageName + " - Status: " + s)
 			
 		})
 	}
