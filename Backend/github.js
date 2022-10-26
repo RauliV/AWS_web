@@ -39,16 +39,16 @@ async function getBranchDesc(branch) {
     return {"json": json, "status": response.status, "statusText": response.statusText}
 }
 
-export async function templateData() {
-    var res = (await factory.getBranches())
+async function templateData() {
+    var res = (await gitFactory.getBranches())
     var data = {"status": res.status, "statusText": res.statusText, "templates": [], "body": {}}
     if (res.status != 200) {
         data.body = res.json
         return data
     }
-    var templates = factory.parseTemplates(await res.json)
+    var templates = gitFactory.parseTemplates(await res.json)
     for (const t of templates) {
-        var res2 = (await factory.getBranchDesc(t))
+        var res2 = (await gitFactory.getBranchDesc(t))
         if (res2.status != 200) {
             data.status = res2.status
             data.statusText = res2.statusText
@@ -61,7 +61,7 @@ export async function templateData() {
     return data
 }
 
-export const factory = {
+export const gitFactory = {
     getBranches,
     parseTemplates,
     getBranchDesc,

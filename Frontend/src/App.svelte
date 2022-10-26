@@ -14,6 +14,11 @@
   console.log(typeof availablePackages);
 
   let selectedPackage = null;
+	
+	// The build parameters.
+  let secretkey = null;
+	let accesskey = null;
+	let region = null;
 
   function processLogin() {
     logMessage("Entered main view from login screen");
@@ -46,10 +51,42 @@
     availablePackages = [];
     selectedPackage = null;
     currentView = Views.Main;
+		
+	let secretkey = null;
+	let accesskey = null;
+	let region = null;
+		
   }
 
-  function buildEnvironment() {
-    logMessage("(NOT IMPLEMENTED) Sent build request to backend");
+  async function sendBuildRequest() {
+    const path = "http://" + window.location.hostname + ":80/api/build";
+
+    let buildParameters = {
+        AWS_ACCESS_KEY_ID: accesskey,
+        AWS_SECRET_ACCESS_KEY: secretkey, // We need to figure a secure way to handle this
+        AWS_REGION: region
+    };
+
+    let buildOptions = {
+      package: selectedPackage.name,
+      parameters: buildParameters,
+    };
+
+    const res = await fetch(path, {
+      method: "POST",
+      body: JSON.stringify(buildOptions),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    logMessage("Sent build request to backend");
+    if (res.status == 200) {
+      const json = await res.json();
+      let result = JSON.stringify(json);
+      logMessage("Received response from backend: " + result);
+    } else {
+      logMessage("Backend reported status: " + res.status);
+    }
+
     selectedPackage = null;
     currentView = Views.Main;
   }
@@ -92,8 +129,26 @@
       <h2>Selected package: {selectedPackage.name}</h2>
       {selectedPackage.description}
 
-      <button on:click={buildEnvironment}> Build </button>
-    {/if}
+	<div>
+		Access key id:
+		<input bind:value={accesskey}/>
+	</div>
+
+	<div>
+		Region:
+		<input bind:value={region}/>
+	</div>
+
+	<div>
+		Secret key:
+		<input type=password bind:value={secretkey}/>
+	</div>
+
+	{#if accesskey && region && secretkey}
+    	<button on:click={sendBuildRequest}> Build </button>
+	{/if}
+
+  {/if}
 
     <button on:click={returnToMain}> Return </button>
   {/if}
