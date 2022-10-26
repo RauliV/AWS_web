@@ -6,7 +6,7 @@ on:
       - closed
 
 jobs:
-  push_backend_to_registery:
+  push_images_to_registry:
     name: Push Docker image to Docker Hub
     if: github.event.pull_request.merged # Ensure PR is merged
     runs-on: ubuntu-latest
