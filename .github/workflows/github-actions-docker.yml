@@ -8,7 +8,7 @@ on:
 jobs:
   push_backend_to_registery:
     name: Push Docker image to Docker Hub
-    if: github.event.pull_request.merged
+    if: github.event.pull_request.merged # Ensure PR is merged
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
