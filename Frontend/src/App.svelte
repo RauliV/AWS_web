@@ -115,19 +115,31 @@
   {/if}
 
   {#if currentView == Views.PackageSelection}
+  <div class="package-view-header">
     <h2>Available packages</h2>
+  </div>
+  <div class="package-view-container">
+    <div class="package-view-left">
+      <select size='5' single bind:value={selectedPackage}>
+        {#each availablePackages as pkg}
+          <option value={pkg}>
+            {pkg.name}
+          </option>
+        {/each}
+      </select>
 
-    <select single bind:value={selectedPackage}>
-      {#each availablePackages as pkg}
-        <option value={pkg}>
-          {pkg.name}
-        </option>
-      {/each}
-    </select>
+    </div>
+    <div class="package-view-right">
+     <h2>hello from right side</h2>
+    </div>
+  </div>
+    
+    
 
     {#if selectedPackage}
       <h2>Selected package: {selectedPackage.name}</h2>
       {selectedPackage.description}
+
 
 	<div>
 		Access key id:
@@ -194,5 +206,28 @@
 		grid-column: 1;
 		margin: 20px;
 	}
-	
+
+  .package-view-header{
+    height: 10vh;
+  }
+
+  .package-view-container{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    height: 90vh;
+
+  }
+
+  .package-view-left{
+    flex:1;
+    background-color: blue;
+  }
+
+  .package-view-right{
+    flex:1;
+    background-color: red;
+  }
+
+
 </style>
