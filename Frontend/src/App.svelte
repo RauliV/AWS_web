@@ -133,20 +133,20 @@ logMessage("Initialized frontend");
             {#if selectedPackage}
             <h2>Selected package: {selectedPackage.name}</h2>
             <p>{selectedPackage.description}</p>
-            <div>
-                Access key id:
-                <input class='package-input' bind:value={accesskey}/>
-            </div>
+            
+                <label for="access-key">Access key</label>
+                <input id="access-key" bind:value={accesskey}/>
+            
 
-            <div>
-                Region:
-                <input class='package-input' bind:value={region}/>
-            </div>
+            
+                <label for="region">Region</label>
+                <input id='region' bind:value={region}/>
+            
 
-            <div>
-                Secret key:
-                <input class='package-input' type=password bind:value={secretkey}/>
-            </div>
+            
+                <label for="secret-key">Secret key</label>
+                <input id='secret-key' type=password bind:value={secretkey}/>
+            
             {#if accesskey && region && secretkey}
             <button class="buildbtn" on:click={sendBuildRequest}> Build </button>
             {/if}
@@ -261,10 +261,17 @@ select {
     text-align: center;
 }
 
-.package-input {
-    width: 50%;
+#secret-key, #region, #access-key{
+  width: 50%;
+  display: block;
+  margin: 0 auto;
 }
 
+label{
+  margin-top: 5%;
+  margin-bottom: 2%;
+  text-align: center;
+}
 
 .buildbtn{
   padding: 10px 50px 10px 50px;
