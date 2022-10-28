@@ -1,25 +1,25 @@
 import express from 'express';
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 import { addLogLine } from './log.js';
 import { gitFactory } from './github.js';
 import 'node-fetch';
 
 if (!process.env.AWS_GIT_TOKEN) {
   dotenv.config();
-  console.log("Dotenv config done");
+  console.log('Dotenv config done');
 }
 
 const token = process.env.AWS_GIT_TOKEN;
 
 //url for triggering action
-const gitBuildUrl = "https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/github-actions-aws-cdk-deploy.yml/dispatches";
+const gitBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/github-actions-aws-cdk-deploy.yml/dispatches';
 
 const app = express();
 const port = 8080;
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  addLogLine("Sir", "Good day");
+  addLogLine('Sir', 'Good day');
   res.send('Good day, Sir!');
 });
 
@@ -42,10 +42,10 @@ app.post('/api/build', async (req, res) => {
   const packageParams = json.parameters;
 
   const options = {
-    method: "post",
+    method: 'post',
     headers: {
-      "Accept": "application/vnd.github+json",
-      "Authorization": `Bearer ${ token}`
+      'Accept': 'application/vnd.github+json',
+      'Authorization': `Bearer ${ token}`
     },
     body: JSON.stringify({
       ref: packageName,

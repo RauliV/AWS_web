@@ -49,8 +49,8 @@ const OkBranchesResponse = {
 
 const notOkBranchesResponse = {
     json: {
-        "message": "Not Found",
-        "documentation_url": "https://docs.github.com/rest"
+        'message': 'Not Found',
+        'documentation_url': 'https://docs.github.com/rest'
     },
     status: 404,
     statusText: 'Not Found'
