@@ -133,20 +133,16 @@ logMessage("Initialized frontend");
             {#if selectedPackage}
             <h2>Selected package: {selectedPackage.name}</h2>
             <p>{selectedPackage.description}</p>
-            
-                <label for="access-key">Access key</label>
-                <input id="access-key" bind:value={accesskey}/>
-            
 
-            
-                <label for="region">Region</label>
-                <input id='region' bind:value={region}/>
-            
+            <label for="access-key">Access key</label>
+            <input id="access-key" bind:value={accesskey}/>
 
-            
-                <label for="secret-key">Secret key</label>
-                <input id='secret-key' type=password bind:value={secretkey}/>
-            
+            <label for="region">Region</label>
+            <input id='region' bind:value={region}/>
+
+            <label for="secret-key">Secret key</label>
+            <input id='secret-key' type=password bind:value={secretkey}/>
+
             {#if accesskey && region && secretkey}
             <button class="buildbtn" on:click={sendBuildRequest}> Build </button>
             {/if}
@@ -249,48 +245,61 @@ select {
 
 .package-view-left {
     flex: 1;
-    position:relative;
+    position: relative;
 }
 
 .package-view-right {
     flex: 1;
-    position:relative;
+    position: relative;
 }
 
 .package-view-right p {
     text-align: center;
 }
 
-#secret-key, #region, #access-key{
-  width: 50%;
-  display: block;
-  margin: 0 auto;
+#secret-key,
+#region,
+#access-key {
+    width: 50%;
+    display: block;
+    margin: 0 auto;
 }
 
-label{
-  margin-top: 5%;
-  margin-bottom: 2%;
-  text-align: center;
+label {
+    margin-top: 5%;
+    margin-bottom: 2%;
+    text-align: center;
 }
 
-.buildbtn{
-  padding: 10px 50px 10px 50px;
-  color: white;
-  background-color: #008CBA;
-  display: block;
-  margin: 0 auto;
-  margin-top: 16%;
-
+.buildbtn {
+    padding: 10px 50px 10px 50px;
+    color: white;
+    background-color: #008CBA;
+    display: block;
+    margin: 0 auto;
+    margin-top: 16%;
+    transition-duration: 0.4s;
 }
 
-.returnbtn{
-  padding: 10px 50px 10px 50px;
-  color: white;
-  background-color: #f44336;
-  display: block;
-  margin: 0 auto;
-  margin-top: 20%;
-  
+.buildbtn:hover{
+  background-color: white;
+  border-color: #008CBA;
+  color: black;
+}
 
+.returnbtn {
+    padding: 10px 50px 10px 50px;
+    color: white;
+    background-color: #f44336;
+    display: block;
+    margin: 0 auto;
+    margin-top: 20%;
+    transition-duration: 0.4s;
+}
+
+.returnbtn:hover{
+  background-color: white;
+  border-color: #f44336;
+  color: black;
 }
 </style>
