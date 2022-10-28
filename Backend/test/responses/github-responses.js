@@ -5,7 +5,7 @@ const OkBranchDesc1 = {
     },
     status: 200,
     statusText: 'OK'
-}
+};
 
 const OkBranchDesc2 = {
     json: {
@@ -14,7 +14,7 @@ const OkBranchDesc2 = {
     },
     status: 200,
     statusText: 'OK'
-}
+};
 
 const NotOkBranchDesc = {
     json: {
@@ -23,7 +23,7 @@ const NotOkBranchDesc = {
     },
     status: 404,
     statusText: 'Not Found'
-}
+};
 
 const OkBranchesResponse = {
     json: [
@@ -45,7 +45,7 @@ const OkBranchesResponse = {
     ],
     status: 200,
     statusText: 'OK'
-}
+};
 
 const notOkBranchesResponse = {
     json: {
@@ -54,7 +54,7 @@ const notOkBranchesResponse = {
     },
     status: 404,
     statusText: 'Not Found'
-}
+};
 
 export const githubResponses = {
   notOkBranchesResponse,
@@ -62,4 +62,4 @@ export const githubResponses = {
   NotOkBranchDesc,
   OkBranchDesc1,
   OkBranchDesc2
-}
+};

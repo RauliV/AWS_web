@@ -20,14 +20,14 @@ export async function addLogLine(userId =' -', description = '-'){
     const header = 'LINE\tDATE AND TIME OF THE ACTION\tUSERID\t\tCALLER FUNCTION\t\tDESCRIPTION\n';
     
     try {
-      content =  await fs.readFile(logFile);  
+      content = await fs.readFile(logFile);  
     } catch(err) {      
-      if (err.code == 'ENOENT'){  //File not found
+      if (err.code == 'ENOENT'){ //File not found
         try {
           fs.mkdir(logDir); //making directory if it doesn't exsist        
-          await fs.appendFile(logFile, header);  //Create a new logfile
+          await fs.appendFile(logFile, header); //Create a new logfile
           await addLogLine('System', 'No logfile yet, creating one.'); //Logging creating new file
-          console.log('File: ' + logFile + ' not found. I will create one for you');
+          console.log(`File: ${ logFile } not found. I will create one for you`);
           nextLineNumber++;
         } 
         catch (errCreating){
@@ -36,29 +36,29 @@ export async function addLogLine(userId =' -', description = '-'){
       }
     }
   
-    userId = userId.substring(0,8).padEnd(8)
+    userId = userId.substring(0, 8).padEnd(8);
     const caller = callerId.getData(addLogLine);
     const lineNumber = caller.lineNumber;
-    const callerFunction = caller.functionName.substring(0,15).padEnd(15) + '(' + lineNumber + ')';
+    const callerFunction = `${caller.functionName.substring(0, 15).padEnd(15) }(${ lineNumber })`;
     const timeStamp = new Date().toUTCString();
-    let lines = content.toString().split('\n');
+    const lines = content.toString().split('\n');
     if (lines.length > 2) {     
       const lastLine = lines[lines.length-1]; 
       nextLineNumber = (Number(lastLine.split('\t')[0])) + 1;    
     }
-    const newLog = nextLineNumber + '\t' + timeStamp + '\t' + userId + 
-    '\t' + callerFunction + '\t' + description;
+    const newLog = `${nextLineNumber }\t${ timeStamp }\t${ userId  
+    }\t${ callerFunction }\t${ description}`;
 
     if (lines.length > maxLineNumbers){
-      lines.push(newLog);   //Add new line
-      lines.splice(0, 3);   //Remove first header and first line
+      lines.push(newLog); //Add new line
+      lines.splice(0, 3); //Remove first header and first line
       
       await fs.unlink(logFile);
-      let newLines = [];
+      const newLines = [];
       newLines.push(header);
       lines.forEach(element => {
-        newLines.push('\n' + element); 
-      })
+        newLines.push(`\n${ element}`); 
+      });
       await fs.appendFile(logFile, newLines, function(error) {
         if (error) {
           console.log(error);
@@ -66,8 +66,8 @@ export async function addLogLine(userId =' -', description = '-'){
       });
     }
     else {
-      lines.push('/n' + newLog);
-      await fs.appendFile(logFile, '\n' + newLog, function(error) {
+      lines.push(`/n${ newLog}`);
+      await fs.appendFile(logFile, `\n${ newLog}`, function(error) {
         if (error) {
           console.log(error);
         }
