@@ -1,3 +1,4 @@
+/* eslint-disable no-invalid-this */
 /* eslint-disable no-undef */
 import chai from "chai";
 import request from "supertest";
@@ -20,7 +21,7 @@ describe('GET /', function() {
 });
 
 describe('GET /api/list', function() {
-	timeout(5000);
+	this.timeout(5000);
 	beforeEach(() => {
         sandbox.restore();
     });
@@ -36,7 +37,7 @@ describe('GET /api/list', function() {
 });
 
 describe('POST /api/build', async function() {
-	timeout(5000);
+	this.timeout(5000);
 	beforeEach(() => {
         sandbox.restore();
     });
