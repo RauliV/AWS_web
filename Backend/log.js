@@ -22,7 +22,7 @@ export async function addLogLine(userId =' -', description = '-'){
     try {
       content = await fs.readFile(logFile);  
     } catch(err) {      
-      if (err.code == 'ENOENT'){ //File not found
+      if (err.code === 'ENOENT'){ //File not found
         try {
           fs.mkdir(logDir); //making directory if it doesn't exsist        
           await fs.appendFile(logFile, header); //Create a new logfile

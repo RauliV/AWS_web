@@ -20,7 +20,7 @@ describe('GET /', function() {
 });
 
 describe('GET /api/list', function() {
-	this.timeout(5000);
+	timeout(5000);
 	beforeEach(() => {
         sandbox.restore();
     });
@@ -36,7 +36,7 @@ describe('GET /api/list', function() {
 });
 
 describe('POST /api/build', async function() {
-	this.timeout(5000);
+	timeout(5000);
 	beforeEach(() => {
         sandbox.restore();
     });

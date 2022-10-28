@@ -54,7 +54,7 @@ app.post('/api/build', async (req, res) => {
   };
   
   const response = await indexFactory.triggerBuild(options); 
-  if (response.status == 204) {
+  if (response.status === 204) {
     res.status(200);
   } else {
     res.status(response.status);
