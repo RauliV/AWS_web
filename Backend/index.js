@@ -1,39 +1,39 @@
 import express from 'express';
-import dotenv from "dotenv"
+import dotenv from 'dotenv';
 import { addLogLine } from './log.js';
-import { gitFactory } from './github.js'
-import 'node-fetch'
+import { gitFactory } from './github.js';
+import 'node-fetch';
 
 if (!process.env.AWS_GIT_TOKEN) {
-  dotenv.config()
-  console.log("Dotenv config done")
+  dotenv.config();
+  console.log('Dotenv config done');
 }
 
-const token = process.env.AWS_GIT_TOKEN
+const token = process.env.AWS_GIT_TOKEN;
 
 //url for triggering action
-const gitBuildUrl = "https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/github-actions-aws-cdk-deploy.yml/dispatches";
+const gitBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/github-actions-aws-cdk-deploy.yml/dispatches';
 
-const app = express()
-const port = 8080
+const app = express();
+const port = 8080;
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  addLogLine("Sir", "Good day");
+  addLogLine('Sir', 'Good day');
   res.send('Good day, Sir!');
-})
+});
 
 app.get('/api/list', async (req, res) => {
-  let json_response = await gitFactory.templateData();
-  res.status(json_response.status)
+  const json_response = await gitFactory.templateData();
+  res.status(json_response.status);
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.json(json_response);
-})
+});
 
 async function triggerBuild(options) {
-  let response = await fetch(gitBuildUrl, options)
-  return response
+  const response = await fetch(gitBuildUrl, options);
+  return response;
 }
 
 app.post('/api/build', async (req, res) => {
@@ -41,35 +41,35 @@ app.post('/api/build', async (req, res) => {
   const packageName = json.package;
   const packageParams = json.parameters;
 
-  let options = {
-    method: "post",
+  const options = {
+    method: 'post',
     headers: {
-      "Accept": "application/vnd.github+json",
-      "Authorization": "Bearer " + token
+      'Accept': 'application/vnd.github+json',
+      'Authorization': `Bearer ${ token}`
     },
     body: JSON.stringify({
       ref: packageName,
       inputs: packageParams
     })
-  }
+  };
   
-  let response = await indexFactory.triggerBuild(options); 
-  if (response.status == 204) {
-    res.status(200)
+  const response = await indexFactory.triggerBuild(options); 
+  if (response.status === 204) {
+    res.status(200);
   } else {
-    res.status(response.status)
+    res.status(response.status);
   }
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.json("(PLACEHOLDER) Building " + packageName + " - Status: " + response.status);
+  res.json(`(PLACEHOLDER) Building ${ packageName } - Status: ${ response.status}`);
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});
 
 export default app;
 
 export const indexFactory = {
   triggerBuild
-}
+};
