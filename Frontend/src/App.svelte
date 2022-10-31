@@ -108,86 +108,48 @@ logMessage("Initialized frontend");
 {/if}
 
 <div class="grid-container">
-
     {#if currentView == Views.Main}
     <button class="start-button" on:click={startNewEnvironment}> Start new environment </button>
 
     <h2 class="log-header">Log</h2>
     <textarea readonly bind:value={log}></textarea>
     {/if}
+</div>
 
-    {#if currentView == Views.PackageSelection}
-    <div class="package-view-container">
-        <div class="package-view-left">
-            <h2>Available packages</h2>
-            <select size='5' single bind:value={selectedPackage}>
-                {#each availablePackages as pkg}
-                <option value={pkg}>
-                    {pkg.name}
-                </option>
-                {/each}
-            </select>
-            <button class='returnbtn' on:click={returnToMain}> Return </button>
-        </div>
-        <div class="package-view-right">
-            {#if selectedPackage}
-            <h2>Selected package: {selectedPackage.name}</h2>
-            <p>{selectedPackage.description}</p>
-
-            <label for="access-key">Access key</label>
-            <input id="access-key" bind:value={accesskey}/>
-
-            <label for="region">Region</label>
-            <input id='region' bind:value={region}/>
-
-            <label for="secret-key">Secret key</label>
-            <input id='secret-key' type=password bind:value={secretkey}/>
-
-            {#if accesskey && region && secretkey}
-            <button class="buildbtn" on:click={sendBuildRequest}> Build </button>
-            {/if}
-            {/if}
-        </div>
+{#if currentView == Views.PackageSelection}
+<div class="package-view-container">
+    <div class="package-view-left">
+        <h2>Available packages</h2>
+        <select size='5' single bind:value={selectedPackage}>
+            {#each availablePackages as pkg}
+            <option value={pkg}>
+                {pkg.name}
+            </option>
+            {/each}
+        </select>
+        <button class='returnbtn' on:click={returnToMain}> Return </button>
     </div>
-    {/if}
+    <div class="package-view-right">
+        {#if selectedPackage}
+        <h2>Selected package: {selectedPackage.name}</h2>
+        <p>{selectedPackage.description}</p>
 
-    <!--
+        <label for="access-key">Access key</label>
+        <input id="access-key" bind:value={accesskey}/>
 
-<div>
+        <label for="region">Region</label>
+        <input id='region' bind:value={region}/>
 
-Access key id:
+        <label for="secret-key">Secret key</label>
+        <input id='secret-key' type=password bind:value={secretkey}/>
 
-<input bind:value={accesskey}/>
-
+        {#if accesskey && region && secretkey}
+        <button class="buildbtn" on:click={sendBuildRequest}> Build </button>
+        {/if}
+        {/if}
+    </div>
 </div>
-
-<div>
-
-Region:
-
-<input bind:value={region}/>
-
-</div>
-
-<div>
-
-Secret key:
-
-<input type=password bind:value={secretkey}/>
-
-</div>
-
-{#if accesskey && region && secretkey}
-    	<button on:click={sendBuildRequest}> Build </button>
-
 {/if}
-
-  {/if}
-
-    <button on:click={returnToMain}> Return </button>
-  {/if}
-    -->
-</div>
 
 <style>
 :global(body) {
@@ -281,10 +243,10 @@ label {
     transition-duration: 0.4s;
 }
 
-.buildbtn:hover{
-  background-color: white;
-  border-color: #008CBA;
-  color: black;
+.buildbtn:hover {
+    background-color: white;
+    border-color: #008CBA;
+    color: black;
 }
 
 .returnbtn {
@@ -297,9 +259,9 @@ label {
     transition-duration: 0.4s;
 }
 
-.returnbtn:hover{
-  background-color: white;
-  border-color: #f44336;
-  color: black;
+.returnbtn:hover {
+    background-color: white;
+    border-color: #f44336;
+    color: black;
 }
 </style>
