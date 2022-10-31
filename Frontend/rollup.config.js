@@ -7,6 +7,11 @@ import css from 'rollup-plugin-css-only';
 import replace from '@rollup/plugin-replace';
 
 const production = !process.env.ROLLUP_WATCH;
+let server_connection = JSON.stringify('https');
+
+if (process.env.SERVER_CONNECTION) {
+	server_connection = JSON.stringify('http');
+}
 
 function serve() {
 	let server;
@@ -72,7 +77,7 @@ export default {
 		production && terser(),
 		replace({
 			preventAssignment: true,
-			SERVER_CONNECTION: JSON.stringify(process.env.SERVER_CONNECTION),
+			SERVER_CONNECTION: server_connection,
 		})
 	],
 	watch: {
