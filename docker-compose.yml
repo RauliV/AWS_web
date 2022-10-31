@@ -15,7 +15,6 @@ services:
       dockerfile: Dockerfile
       context: ./Frontend
       args:
-       - SERVER_PORT=80
        - SERVER_CONNECTION=http
     depends_on:
       - backend
