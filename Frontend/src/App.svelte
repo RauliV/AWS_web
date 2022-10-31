@@ -27,8 +27,7 @@ function processLogin() {
 
 function startNewEnvironment() {
     logMessage("Starting new environment");
-    const path = "https://" + window.location.hostname + ":443/api/list";
-
+    const path = SERVER_CONNECTION + "://" + window.location.hostname + ":" + SERVER_PORT + "/api/list";
     const response = fetch(path)
         .then((response) => response.json())
         .then((data) => {
@@ -59,7 +58,7 @@ function returnToMain() {
   }
 
   async function sendBuildRequest() {
-    const path = "https://" + window.location.hostname + ":443/api/build";
+    const path = SERVER_CONNECTION + "://" + window.location.hostname + ":" + SERVER_PORT + "/api/build";
 
     let buildParameters = {
         AWS_ACCESS_KEY_ID: accesskey,
