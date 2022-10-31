@@ -14,10 +14,11 @@
     "mocha-eslint": "^7.0.0",
     "node-fetch": "^3.2.10",
     "sinon": "^14.0.1",
-    "supertest": "^6.2.4"
+    "supertest": "^6.2.4",
+    "nyc": "^15.1.0"
   },
   "scripts": {
-    "test": "mocha --exit"
+    "test": "nyc --all=true --check-coverage=true --reporter=text mocha --exit"
   },
   "author": "",
   "license": "ISC",
