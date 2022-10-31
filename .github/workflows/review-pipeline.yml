@@ -26,3 +26,10 @@ jobs:
       - name: Run tests
         working-directory: ./Backend
         run: npm test
+
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@1.1.3
+        with:
+          github-token: ${{ secrets.github_token }}
+          path-to-lcov: "./coverage/lcov.info"
+

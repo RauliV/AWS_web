@@ -18,7 +18,7 @@
     "nyc": "^15.1.0"
   },
   "scripts": {
-    "test": "nyc --all=true --check-coverage=true --reporter=text mocha --exit"
+    "test": "nyc --all=true --check-coverage=true --reporter=Icov  mocha --exit"
   },
   "author": "",
   "license": "ISC",
