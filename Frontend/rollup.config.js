@@ -73,7 +73,6 @@ export default {
 		replace({
 			preventAssignment: true,
 			SERVER_CONNECTION: JSON.stringify(process.env.SERVER_CONNECTION),
-			SERVER_PORT: JSON.stringify(process.env.SERVER_PORT)
 		})
 	],
 	watch: {
