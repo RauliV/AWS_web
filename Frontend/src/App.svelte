@@ -27,7 +27,7 @@ function processLogin() {
 
 function startNewEnvironment() {
     logMessage("Starting new environment");
-    const path = "http://" + window.location.hostname + ":80/api/list";
+    const path = "https://" + window.location.hostname + ":443/api/list";
 
     const response = fetch(path)
         .then((response) => response.json())
@@ -51,15 +51,15 @@ function returnToMain() {
     availablePackages = [];
     selectedPackage = null;
     currentView = Views.Main;
-
+		
     let secretkey = null;
     let accesskey = null;
     let region = null;
+		
+  }
 
-}
-
-async function sendBuildRequest() {
-    const path = "http://" + window.location.hostname + ":80/api/build";
+  async function sendBuildRequest() {
+    const path = "https://" + window.location.hostname + ":443/api/build";
 
     let buildParameters = {
         AWS_ACCESS_KEY_ID: accesskey,
