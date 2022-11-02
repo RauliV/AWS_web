@@ -19,7 +19,7 @@
   },
   "scripts": {
     "test": "mocha --exit",
-    "coverage": "c8 report --report=lcov npm test"
+    "coverage": "npx c8 npm test"
   },
   "author": "",
   "license": "ISC",
