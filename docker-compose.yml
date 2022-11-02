@@ -14,6 +14,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./Frontend
+      args:
+       - SERVER_CONNECTION=http
     depends_on:
       - backend
     networks:
