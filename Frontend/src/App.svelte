@@ -106,14 +106,19 @@ logMessage("Initialized frontend");
 <button class="login-button" on:click={processLogin}> Login </button>
 {/if}
 
-<div class="grid-container">
     {#if currentView == Views.Main}
-    <button class="start-button" on:click={startNewEnvironment}> Start new environment </button>
+    <div class="main-view-container">
+        <div class="main-view-right">
+            <button class="start-button" on:click={startNewEnvironment}> Start new environment </button>
+        </div>
 
-    <h2 class="log-header">Log</h2>
-    <textarea readonly bind:value={log}></textarea>
+        <div class="main-view-left">
+            <h2 for='log'>Log</h2>
+            <textarea id='log' readonly bind:value={log}></textarea>
+        </div>
+    </div>
     {/if}
-</div>
+
 
 {#if currentView == Views.PackageSelection}
 <div class="package-view-container">
@@ -168,9 +173,10 @@ h2 {
 }
 
 textarea {
-    grid-column: 3;
     overflow-y: auto;
-    height: 500px;
+    height: 100%;
+    max-height: 500px;
+    width: 100%;
     resize: none;
     outline: 0px solid transparent !important;
 }
@@ -180,19 +186,24 @@ select {
     margin: 0 auto;
 }
 
-.grid-container {
-    display: grid;
-    grid: 45% auto 45%;
-    column-gap: 50px;
-    column-gap: 50px;
+.main-view-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    height: 40vh;
+}
+.main-view-left {
+    flex: 1;
+    position: relative;
 }
 
-.log-header {
-    grid-area: 1 / 3;
+.main-view-right {
+    flex: 1;
+    position: relative;
 }
 
 .start-button {
-    grid-column: 1;
+    width: 50%;
     margin: 20px;
 }
 
