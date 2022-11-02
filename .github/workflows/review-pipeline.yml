@@ -19,13 +19,19 @@ jobs:
           touch .env
           echo AWS_GIT_TOKEN=${{ secrets.AWS_GIT_TOKEN }} >> .env
           echo AWS_GIT_TOKEN=${{ secrets.AWS_GIT_TOKEN }} >> Backend/.env
-      - name: Install dependencies
-        working-directory: ./Backend
-        run: npm install 
 
-      - name: Run tests and check test coverage
+      - name: Run backend tests
         working-directory: ./Backend
-        run: npm run coverage
+        run: |
+          npm install 
+          npm test
+          npm run coverage
+
+      - name: Run frontend tests
+        working-directory: ./Frontend
+        run: |
+          npm install
+          npm run test
 
       - name: Coveralls
         uses: coverallsapp/github-action@1.1.3
