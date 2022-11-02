@@ -6,6 +6,7 @@
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/parser": "^5.40.1",
+    "c8": "^7.12.0",
     "caller-id": "^0.1.0",
     "chai": "^4.3.6",
     "dotenv": "^16.0.3",
@@ -14,11 +15,11 @@
     "mocha-eslint": "^7.0.0",
     "node-fetch": "^3.2.10",
     "sinon": "^14.0.1",
-    "supertest": "^6.2.4",
-    "nyc": "^15.1.0"
+    "supertest": "^6.2.4"
   },
   "scripts": {
-    "test": "nyc --all=true --check-coverage=true --reporter=Icov  mocha --exit"
+    "test": "mocha --exit",
+    "coverage": "c8 report --report=lcov npm test"
   },
   "author": "",
   "license": "ISC",
