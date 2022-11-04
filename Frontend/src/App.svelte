@@ -25,26 +25,30 @@ let username = null;
 let password = null;
 let logInFailed = false;
 
-async function processLogin() {
+function processLogin() {
     logInFailed = false;
-    let loginInfo = {username: username, password: password};
-    const path = "http://" + window.location.hostname + "/api/auth";
-    const res = await fetch(path, {  
+    let loginInfo = {
+        username: username, 
+        password: password
+    };
+
+    const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
+    const res = fetch(path, {
         method: "POST",
         body: JSON.stringify(loginInfo),
         headers: {
             "Content-Type": "application/json"
+        },
+    }).then((res) => { 
+        if (res.status == 200) {
+            logMessage("Entered main view from login screen");
+            currentView = Views.Main;
+            username = "";
+            password = "";
+        } else {
+            logInFailed = true;
         }
-    });
-    alert(JSON.stringify(res));
-    if (res.status == 200) {
-        logMessage("Entered main view from login screen");
-        currentView = Views.Main;
-        username = "";
-        password = "";
-    } else {
-        logInFailed = true;
-    }
+    })
 }
 
 function startNewEnvironment() {
@@ -320,5 +324,6 @@ label {
     margin-left: auto;
     margin-right: auto;
     color: #f00;
+    text-align: center;
 }
 </style>

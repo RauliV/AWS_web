@@ -67,7 +67,6 @@ app.post('/api/build', async (req, res) => {
 app.post('/api/auth', async (req, res) => {
   const json = req.body;
   const username = json.username;
-  
   // Dummy authentication.
   const users = [ 
     'Kosti', 
@@ -80,13 +79,13 @@ app.post('/api/auth', async (req, res) => {
   ];
 
   if (users.includes(username)) {
-    alert("auth ok");
     res.status(200);
   } else {
     res.status(404);
   }
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.json('Data: no-data');
 });
 
 app.listen(port, () => {
