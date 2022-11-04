@@ -21,5 +21,5 @@ test('pressing login button switches to view with start env button', async () =>
     await fireEvent.click(loginButton)
 
     const Unauthorized = screen.getByRole('div')
-    expect(Unauthorized).toHaveTextContent('Unauthorised')
+    expect(Unauthorized).toHaveTextContent('Unauthorized')
 })
