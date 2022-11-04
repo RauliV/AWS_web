@@ -70,15 +70,17 @@ app.post('/api/auth', async (req, res) => {
   
   // Dummy authentication.
   const users = [ 
-    'Kosti Korhonen', 
-    'Onni Hartikainen', 
-    'Miikka Mensiö', 
-    'Rauli Virtanen', 
-    'Veera Väisänen', 
-    'Hermanni Rytkölä', 
-    'Linnea Salmimaa'
+    'Kosti', 
+    'Onni', 
+    'Miikka', 
+    'Rauli', 
+    'Veera', 
+    'Hermanni', 
+    'Linnea'
   ];
+
   if (users.includes(username)) {
+    alert("auth ok");
     res.status(200);
   } else {
     res.status(404);

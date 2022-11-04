@@ -25,21 +25,23 @@ let username = null;
 let password = null;
 let logInFailed = false;
 
-function processLogin() {
-    logMessage("Entered main view from login screen");
-    const path = "http://" + window.location.hostname + ":80/api/auth";
-    const res = fetch(path, {  
+async function processLogin() {
+    logInFailed = false;
+    let loginInfo = {username: username, password: password};
+    const path = "http://" + window.location.hostname + "/api/auth";
+    const res = await fetch(path, {  
         method: "POST",
-        body: JSON.stringify({username: username, password: password}),
+        body: JSON.stringify(loginInfo),
         headers: {
             "Content-Type": "application/json"
-        },
+        }
     });
+    alert(JSON.stringify(res));
     if (res.status == 200) {
+        logMessage("Entered main view from login screen");
         currentView = Views.Main;
         username = "";
         password = "";
-        logInFailed = false;
     } else {
         logInFailed = true;
     }
@@ -127,7 +129,7 @@ logMessage("Initialized frontend");
   <input class="password" bind:value={password} type="password" placeholder="Password"/>
 
     {#if logInFailed }
-        <div>Unauthorized</div>
+        <div class="unauthorized">Unauthorized</div>
     {/if}
 
   <button class="login-button" on:click={processLogin}> Login </button>
@@ -312,5 +314,11 @@ label {
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+.unauthorized {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    color: #f00;
 }
 </style>
