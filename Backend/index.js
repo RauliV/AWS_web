@@ -66,7 +66,7 @@ app.post('/api/build', async (req, res) => {
 
 app.post('/api/auth', async (req, res) => {
   const json = req.body;
-  const userName = json.userName;
+  const username = json.username;
   
   // Dummy authentication.
   const users = [ 
@@ -78,7 +78,7 @@ app.post('/api/auth', async (req, res) => {
     'Hermanni Rytkölä', 
     'Linnea Salmimaa'
   ];
-  if (users.includes(userName)) {
+  if (users.includes(username)) {
     res.status(200);
   } else {
     res.status(404);
