@@ -64,6 +64,29 @@ app.post('/api/build', async (req, res) => {
   res.json(`(PLACEHOLDER) Building ${ packageName } - Status: ${ response.status}`);
 });
 
+app.post('/api/auth', async (req, res) => {
+  const json = req.body;
+  const userName = json.userName;
+  
+  // Dummy authentication.
+  const users = [ 
+    'Kosti Korhonen', 
+    'Onni Hartikainen', 
+    'Miikka Mensiö', 
+    'Rauli Virtanen', 
+    'Veera Väisänen', 
+    'Hermanni Rytkölä', 
+    'Linnea Salmimaa'
+  ];
+  if (users.includes(userName)) {
+    res.status(200);
+  } else {
+    res.status(404);
+  }
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
