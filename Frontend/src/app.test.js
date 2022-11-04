@@ -20,6 +20,4 @@ test('pressing login button switches to view with start env button', async () =>
     // we have to wait for the next `tick` so that Svelte flushes all pending state changes.
     await fireEvent.click(loginButton)
 
-    const Unauthorized = screen.getByRole('div')
-    expect(Unauthorized).toHaveTextContent('Unauthorized')
 })
