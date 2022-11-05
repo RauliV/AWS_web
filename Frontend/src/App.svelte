@@ -129,11 +129,11 @@ logMessage("Initialized frontend");
 <h1>One AWS to go, Please!</h1>
 
 {#if currentView == Views.Login}
-  <input  class="username" bind:value={username} type="text" placeholder="Username"/>
+  <input class="username" bind:value={username} type="text" placeholder="Username"/>
   <input class="password" bind:value={password} type="password" placeholder="Password"/>
 
     {#if logInFailed }
-        <div class="unauthorized">Unauthorized</div>
+        <div class="error">Unauthorized</div>
     {/if}
 
   <button class="login-button" on:click={processLogin}> Login </button>
@@ -319,7 +319,7 @@ label {
     margin-left: auto;
     margin-right: auto;
 }
-.unauthorized {
+.error {
     display: block;
     margin-left: auto;
     margin-right: auto;
