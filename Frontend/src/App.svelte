@@ -51,9 +51,9 @@ function returnToMain() {
     selectedPackage = null;
     currentView = Views.Main;
 		
-    let secretkey = null;
-    let accesskey = null;
-    let region = null;
+    secretkey = null;
+    accesskey = null;
+    region = null;
 		
   }
 
