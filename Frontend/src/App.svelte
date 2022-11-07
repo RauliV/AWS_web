@@ -107,9 +107,10 @@ function returnToMain() {
 
     logMessage("Sent build request to backend");
     if (res.status == 200) {
-        const json = await res.json();
-        let result = JSON.stringify(json);
-        logMessage("Received response from backend: " + result);
+      const json = await res.json();
+      let result = JSON.stringify(json);
+      logMessage("Received response from backend: " + result);
+      getBuildStatus();
     } else {
         logMessage("Backend reported status: " + res.status);
     }
@@ -118,10 +119,26 @@ function returnToMain() {
     currentView = Views.Main;
 }
 
-function logMessage(message) {
-    var newMessage = new Date(Date.now()) + " - " + message + "\n";
-    log = log + newMessage;
-}
+  async function getBuildStatus(/*buildId*/) {
+    const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
+    var notFinished = true;
+    while(notFinished){
+        const res = await fetch(path);
+        if( res.status == 200 ){
+            let state = res.body;
+            logMessage( `Current build status: ${ state } `);
+            if(state === 'completed'){
+                notFinished = false;  // We got the last status.
+                return;
+            }
+        }
+    }
+  }
+
+  function logMessage(message) {
+		var newMessage = new Date(Date.now()) + " - " + message + "\n";
+		log = log + newMessage;
+  }
 
 logMessage("Initialized frontend");
 </script>
