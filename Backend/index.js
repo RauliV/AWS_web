@@ -82,10 +82,7 @@ app.post('/api/build', async (req, res) => {
   //get status
   //timeout because action is in queue for couple seconds
   //if we get status before action is in process, we get the data from previous workflow run
-    setTimeout(() => {
-     getStatus();
-      
-    }, 5000);
+  getStatus();
     
   }
 });
