@@ -39,6 +39,14 @@ async function triggerBuild(buildUrl, options) {
   return response
 }
 
+app.get('api/status', async(req, res) =>{
+  let state = await getStatus();
+  res.status(200);
+  res.json(`State: ${ state }`);
+})
+
+// NOTE: I would call this in the api/status query comming from front insted of api/built query.
+// buid query gets to return and status query is waiting for next new state.
 async function getStatus(){
   // url and query string for getting workflow runs
   let timeStamp = new Date().toISOString().substring(0,10);
@@ -57,7 +65,7 @@ async function getStatus(){
       let status = jobsData.jobs[0].status;
       console.log("Current status is: " + status);
       if(status === 'completed'){
-        break;
+        return status//break;
       }
       else{
         console.log("Lets wait for 5 seconds")
