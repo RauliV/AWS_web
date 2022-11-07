@@ -43,17 +43,27 @@ async function getStatus(){
   // url and query string for getting workflow runs
   let timeStamp = new Date().toISOString().substring(0,10);
   let queryString = "?created=" + timeStamp;
-  const getWorkFlowsUrl = "https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/runs"
+  const getWorkFlowsUrl = "https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/runs"+queryString;
 
   console.log("This is status log");
   const workflowRunHeaders = {"Accept" : "application/vnd.github+json", "Authorization" : "Bearer " + token};
-  
+  await new Promise(resolve => setTimeout(resolve, 5000));
   let workflowRuns = await fetch(getWorkFlowsUrl, {headers: workflowRunHeaders});
   let jsonData = await workflowRuns.json();
   let jobs_url = jsonData.workflow_runs[0].jobs_url;
-  let jobs = await fetch(jobs_url, {headers: workflowRunHeaders});
-  let jobsData = await jobs.json();
-  console.log(jobsData);
+  while(true){  
+      let jobs = await fetch(jobs_url, {headers: workflowRunHeaders});
+      let jobsData = await jobs.json();
+      let status = jobsData.jobs[0].status;
+      console.log("Current status is: " + status);
+      if(status === 'completed'){
+        break;
+      }
+      else{
+        console.log("Lets wait for 5 seconds")
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+  }
 }
 
 app.post('/api/build', async (req, res) => {
@@ -87,10 +97,7 @@ app.post('/api/build', async (req, res) => {
   //get status
   //timeout because action is in queue for couple seconds
   //if we get status before action is in process, we get the data from previous workflow run
-    setTimeout(() => {
-     getStatus();
-      
-    }, 5000);
+  getStatus();
     
   });
 
