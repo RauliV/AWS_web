@@ -20,9 +20,35 @@ let secretkey = null;
 let accesskey = null;
 let region = null;
 
+// Login parameters
+let username = null;
+let password = null;
+let logInFailed = false;
+
 function processLogin() {
-    logMessage("Entered main view from login screen");
-    currentView = Views.Main;
+    logInFailed = false;
+    let loginInfo = {
+        username: username, 
+        password: password
+    };
+
+    const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
+    const res = fetch(path, {
+        method: "POST",
+        body: JSON.stringify(loginInfo),
+        headers: {
+            "Content-Type": "application/json"
+        },
+    }).then((res) => { 
+        if (res.status == 200) {
+            logMessage("Entered main view from login screen");
+            currentView = Views.Main;
+            username = "";
+            password = "";
+        } else {
+            logInFailed = true;
+        }
+    })
 }
 
 function startNewEnvironment() {
@@ -103,10 +129,17 @@ logMessage("Initialized frontend");
 <h1>One AWS to go, Please!</h1>
 
 {#if currentView == Views.Login}
-<button class="login-button" on:click={processLogin}> Login </button>
+  <input class="username" bind:value={username} type="text" placeholder="Username"/>
+  <input class="password" bind:value={password} type="password" placeholder="Password"/>
+
+    {#if logInFailed }
+        <div class="error">Unauthorized</div>
+    {/if}
+
+  <button class="login-button" on:click={processLogin}> Login </button>
 {/if}
 
-    {#if currentView == Views.Main}
+{#if currentView == Views.Main}
     <div class="main-view-container">
         <div class="main-view-right">
             <button class="start-button" on:click={startNewEnvironment}> Start new environment </button>
@@ -117,7 +150,7 @@ logMessage("Initialized frontend");
             <textarea id='log' readonly bind:value={log}></textarea>
         </div>
     </div>
-    {/if}
+{/if}
 
 
 {#if currentView == Views.PackageSelection}
@@ -273,5 +306,24 @@ label {
     background-color: white;
     border-color: #f44336;
     color: black;
+}
+
+.username {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.password {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.error {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    color: #f00;
+    text-align: center;
 }
 </style>
