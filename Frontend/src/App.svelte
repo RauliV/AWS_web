@@ -1,5 +1,4 @@
 <script>
-import { onMount } from 'svelte';
 
 const Views = {
     Login: "Login",
