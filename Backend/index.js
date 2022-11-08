@@ -46,7 +46,7 @@ app.get('api/status', async(req, res) =>{
 })
 
 // NOTE: I would call this in the api/status query comming from front insted of api/built query.
-// buid query gets to return and status query is waiting for next new state.
+// buid query gets to return and status query is waiting for next new state. 
 async function getStatus(){
   // url and query string for getting workflow runs
   let timeStamp = new Date().toISOString().substring(0,10);
