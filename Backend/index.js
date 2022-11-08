@@ -35,7 +35,6 @@ app.get('/api/list', async (req, res) => {
 
 async function triggerBuild(buildUrl, options) {
   const response = await fetch(buildUrl, options);
-  console.log(response);
   return response;
 }
 
@@ -62,11 +61,23 @@ async function getStatus(){
   const jobs_url = jsonData.workflow_runs[0].jobs_url;
   const jobs = await fetch(jobs_url, {headers: workflowRunHeaders});
   const jobsData = await jobs.json();
-  console.log({status: jobsData.jobs[0].status, conclusion: jobsData.jobs[0].conclusion});
-  return {
+  let stepInProgress = '';
+  let stepNumber = 0;
+  const stepCount = jobsData.jobs[0].steps.length;
+  for (const step of jobsData.jobs[0].steps) {
+    if (step.status === 'in_progress' || (step.status === 'completed' && step.conclusion === 'failure')) {
+      stepInProgress = step.name;
+      stepNumber = step.number;
+    }
+  }
+  const returnObject = {
     status: jobsData.jobs[0].status,
-    conclusion: jobsData.jobs[0].conclusion
+    conclusion: jobsData.jobs[0].conclusion,
+    stepName: stepInProgress,
+    stepNumber: stepNumber,
+    stepCount: stepCount
   };
+  return returnObject;
 }
 
 app.post('/api/build', async (req, res) => {
@@ -85,25 +96,19 @@ app.post('/api/build', async (req, res) => {
       inputs: packageParams
     })
   };
-  //let response = await indexFactory.triggerBuild(options); 
   const response = await indexFactory.triggerBuild(mockBuildUrl, options);
 
   if (response.status === 204) {
     res.status(200);
 
-  res.json(`(PLACEHOLDER) Building ${packageName} - Status: ${response.status}`);
-  //get status
-  //timeout because action is in queue for couple seconds
-  //if we get status before action is in process, we get the data from previous workflow run
-  //getStatus();
+
+  res.json(`Triggered build action successfully - ${packageName}`);
+  // eslint-disable-next-line no-promise-executor-return
+  await new Promise(r => setTimeout(r, 1000));
+  getStatus();
     
   }
 });
-
-
-  
-  //let run_id = JSON.parse(workflowRuns).workflow_runs[0].id;
-  //console.log(run_id);
 
 app.post('/api/auth', async (req, res) => {
   const json = req.body;
