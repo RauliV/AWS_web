@@ -69,12 +69,6 @@ async function getStatus(){
   };
 }
 
-app.get('api/status', async(req, res) => {
-  const state = await getStatus();
-  res.status(200);
-  res.json(`State: ${ state }`);
-});
-
 app.post('/api/build', async (req, res) => {
   const json = req.body;
   const packageName = json.package;
