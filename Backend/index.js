@@ -67,40 +67,11 @@ async function getStatus(){
   };
 }
 
-app.get('api/status', async(req, res) =>{
-  let state = await getStatus();
+app.get('api/status', async(req, res) => {
+  const state = await getStatus();
   res.status(200);
   res.json(`State: ${ state }`);
-})
-
-// NOTE: I would call this in the api/status query comming from front insted of api/built query.
-// buid query gets to return and status query is waiting for next new state. 
-async function getStatus(){
-  // url and query string for getting workflow runs
-  let timeStamp = new Date().toISOString().substring(0,10);
-  let queryString = "?created=" + timeStamp;
-  const getWorkFlowsUrl = "https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/runs"+queryString;
-
-  console.log("This is status log");
-  const workflowRunHeaders = {"Accept" : "application/vnd.github+json", "Authorization" : "Bearer " + token};
-  await new Promise(resolve => setTimeout(resolve, 5000));
-  let workflowRuns = await fetch(getWorkFlowsUrl, {headers: workflowRunHeaders});
-  let jsonData = await workflowRuns.json();
-  let jobs_url = jsonData.workflow_runs[0].jobs_url;
-  while(true){  
-      let jobs = await fetch(jobs_url, {headers: workflowRunHeaders});
-      let jobsData = await jobs.json();
-      let status = jobsData.jobs[0].status;
-      console.log("Current status is: " + status);
-      if(status === 'completed'){
-        return status//break;
-      }
-      else{
-        console.log("Lets wait for 5 seconds")
-        await new Promise(resolve => setTimeout(resolve, 5000));
-      }
-  }
-}
+});
 
 app.post('/api/build', async (req, res) => {
   const json = req.body;
