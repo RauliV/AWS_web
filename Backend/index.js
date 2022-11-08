@@ -39,21 +39,20 @@ async function triggerBuild(buildUrl, options) {
   return response;
 }
 
-app.get('api/status', async(req, res) =>{
-  let state = await getStatus();
+app.get('/api/status', async(req, res) => {
+  const state = await getStatus();
   res.status(200);
-  res.json(`State: ${ state }`);
-})
+  res.json(state);
+});
 
-// NOTE: I would call this in the api/status query comming from front insted of api/built query.
-// buid query gets to return and status query is waiting for next new state. 
+// NOTE: I would call this in the api/status query coming from front instead of api/built query.
+// build query gets to return and status query is waiting for next new state. 
 async function getStatus(){
   // url and query string for getting workflow runs
   const timeStamp = new Date().toISOString().substring(0, 10);
   const queryString = `?created=${timeStamp}`;
   const getWorkFlowsUrl = `https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/runs${queryString}`;
 
-  console.log('This is status log');
   const workflowRunHeaders = {'Accept' : 'application/vnd.github+json', 'Authorization' : `Bearer ${ token}`};
   
   const workflowRuns = await fetch(getWorkFlowsUrl, {headers: workflowRunHeaders});
@@ -61,7 +60,11 @@ async function getStatus(){
   const jobs_url = jsonData.workflow_runs[0].jobs_url;
   const jobs = await fetch(jobs_url, {headers: workflowRunHeaders});
   const jobsData = await jobs.json();
-  console.log(jobsData);
+  console.log({status: jobsData.jobs[0].status, conclusion: jobsData.jobs[0].conclusion});
+  return {
+    status: jobsData.jobs[0].status,
+    conclusion: jobsData.jobs[0].conclusion
+  };
 }
 
 app.post('/api/build', async (req, res) => {

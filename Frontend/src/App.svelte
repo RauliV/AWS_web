@@ -1,4 +1,6 @@
 <script>
+import { onMount } from 'svelte';
+
 const Views = {
     Login: "Login",
     Main: "Main",
@@ -24,6 +26,23 @@ let region = null;
 let username = null;
 let password = null;
 let logInFailed = false;
+// For updating the build status
+let updating = false;
+let last_status = '';
+
+const update = () => {
+    if (updating) {
+        getBuildStatus()
+    }
+}
+
+let clear
+ $: {
+	 clearInterval(clear)
+	 clear = setInterval(update, 5000)
+ }
+
+
 
 function processLogin() {
     logInFailed = false;
@@ -110,7 +129,8 @@ function returnToMain() {
       const json = await res.json();
       let result = JSON.stringify(json);
       logMessage("Received response from backend: " + result);
-      getBuildStatus();
+      //getBuildStatus();
+      updating = true;
     } else {
         logMessage("Backend reported status: " + res.status);
     }
@@ -121,17 +141,24 @@ function returnToMain() {
 
   async function getBuildStatus(/*buildId*/) {
     const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
-    var notFinished = true;
-    while(notFinished){
-        const res = await fetch(path);
-        if( res.status == 200 ){
-            let state = res.body;
-            logMessage( `Current build status: ${ state } `);
-            if(state === 'completed'){
-                notFinished = false;  // We got the last status.
-                return;
-            }
+    const res = await fetch(path);
+    if( res.status == 200 ){
+        let state = await res.json();
+        if(state.status === 'completed'){
+            updating = false;  // We got the last status.
+            last_status = state.status
+            logMessage( `Current build status: ${state.status}, ${state.conclusion}`);
+            return;
+        } else if (last_status === state.status) {
+            // Status did not change, not logging.
+            return;
+        } else {
+            last_status = state.status;
+            logMessage( `Current build status: ${state.status}`);
+            return;
         }
+
+        
     }
   }
 
