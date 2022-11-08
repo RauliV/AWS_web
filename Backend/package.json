@@ -6,6 +6,7 @@
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/parser": "^5.40.1",
+    "c8": "^7.12.0",
     "caller-id": "^0.1.0",
     "chai": "^4.3.6",
     "dotenv": "^16.0.3",
@@ -17,7 +18,8 @@
     "supertest": "^6.2.4"
   },
   "scripts": {
-    "test": "mocha --exit"
+    "test": "mocha --exit",
+    "coverage": "npx c8 --all -r=lcov -r=text npm test"
   },
   "author": "",
   "license": "ISC",

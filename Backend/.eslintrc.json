@@ -11,5 +11,27 @@
         "sourceType": "module"
     },
     "rules": {
+        "semi": ["warn", "always"],
+        "quotes": ["warn", "single" ],
+        "no-dupe-else-if": ["warn"],
+        "eqeqeq": ["warn", "always"],
+        "no-implicit-globals": "warn",
+        "no-redeclare": "warn",
+        "no-promise-executor-return": "warn",
+        "no-undef": "warn",
+        "no-unused-vars": "warn",
+        "arrow-spacing": "warn",
+        "no-var": "warn",
+        "prefer-const": "warn",
+        "no-unreachable": "warn",
+        "complexity": ["warn", 10],
+        "no-invalid-this": "warn",
+        "no-multi-spaces": "warn",
+        "no-self-assign": "warn",
+        "no-shadow": "warn",
+        "comma-spacing": "warn",
+        "max-lines-per-function": ["warn", 75],
+        "prefer-object-spread": "warn",
+        "prefer-template": "warn"
     }
 }

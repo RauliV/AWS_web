@@ -4,8 +4,14 @@ import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
+import replace from '@rollup/plugin-replace';
 
 const production = !process.env.ROLLUP_WATCH;
+let server_connection = JSON.stringify('https');
+
+if (process.env.SERVER_CONNECTION) {
+	server_connection = JSON.stringify('http');
+}
 
 function serve() {
 	let server;
@@ -68,7 +74,11 @@ export default {
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify
-		production && terser()
+		production && terser(),
+		replace({
+			preventAssignment: true,
+			SERVER_CONNECTION: server_connection,
+		})
 	],
 	watch: {
 		clearScreen: false

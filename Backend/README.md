@@ -23,6 +23,11 @@ If you get Uncaught Error: listen EADDRINUSE: address already in use :::8080
 C:\Windows\System32>taskkill /F /IM node.exe
 ```
 
+# Check backend unit test coverage
+```
+npm run coverage
+```
+
 # Code quality
 There is static code analysis (ESLint) implemented as part of the review pipeline. The analysis contains eslint:recommended configuraition (https://eslint.org/docs/latest/rules/).
 
