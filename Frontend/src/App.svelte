@@ -11,9 +11,6 @@ let availablePackages = [];
 
 let log = "";
 
-console.log(availablePackages);
-console.log(typeof availablePackages);
-
 let selectedPackage = null;
 
 // The build parameters.
@@ -25,13 +22,15 @@ let region = null;
 let username = null;
 let password = null;
 let logInFailed = false;
+
 // For updating the build status
 let updating = false;
-let last_status = '';
+let lastStatus = '';
+let lastStepName = '';
 
 const update = () => {
     if (updating) {
-        getBuildStatus()
+        getBuildStatus();
     }
 }
 
@@ -143,26 +142,35 @@ function returnToMain() {
     const res = await fetch(path);
     if( res.status == 200 ){
         let state = await res.json();
-        if(state.status === 'completed'){
+        if(state.status === 'completed') {
             updating = false;  // We got the last status.
-            last_status = state.status
-            logMessage( `Current build status: ${state.status}, ${state.conclusion}`);
+            lastStatus = '';
+            lastStepName = '';
+            if (state.conclusion === "success") {
+                logMessage( `Current build status: Success!`);
+            } else {
+                logMessage(`Current build status: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
+            }
             return;
-        } else if (last_status === state.status) {
+        } else if (lastStatus === state.status && lastStepName === state.stepName) {
             // Status did not change, not logging.
             return;
+        } else if (state.status === 'in_progress') {
+            lastStatus = state.status;
+            lastStepName= state.stepName;
+            logMessage( `Current build status: In Progress (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
+            return;
         } else {
-            last_status = state.status;
+            lastStatus = state.status;
+            lastStepName= state.stepName;
             logMessage( `Current build status: ${state.status}`);
             return;
         }
-
-        
     }
   }
 
   function logMessage(message) {
-		var newMessage = new Date(Date.now()) + " - " + message + "\n";
+		var newMessage = new Date(Date.now()).toISOString().substring(0, 23) + " - " + message + "\n";
 		log = log + newMessage;
   }
 
