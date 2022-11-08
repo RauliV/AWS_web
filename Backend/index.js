@@ -40,6 +40,7 @@ async function triggerBuild(buildUrl, options) {
 }
 
 app.get('api/status', async(req, res) =>{
+  console.log('Statusquery');
   let state = await getStatus();
   res.status(200);
   res.json(`State: ${ state }`);
@@ -59,19 +60,20 @@ async function getStatus(){
   let workflowRuns = await fetch(getWorkFlowsUrl, {headers: workflowRunHeaders});
   let jsonData = await workflowRuns.json();
   let jobs_url = jsonData.workflow_runs[0].jobs_url;
-  while(true){  
+ // while(true){  
       let jobs = await fetch(jobs_url, {headers: workflowRunHeaders});
       let jobsData = await jobs.json();
       let status = jobsData.jobs[0].status;
       console.log("Current status is: " + status);
-      if(status === 'completed'){
+      return status;
+/*      if(status === 'completed'){
         return status//break;
       }
       else{
         console.log("Lets wait for 5 seconds")
         await new Promise(resolve => setTimeout(resolve, 5000));
-      }
-  }
+      }*/
+ // }
 }
 
 app.post('/api/build', async (req, res) => {
@@ -105,7 +107,7 @@ app.post('/api/build', async (req, res) => {
   //get status
   //timeout because action is in queue for couple seconds
   //if we get status before action is in process, we get the data from previous workflow run
-  getStatus();
+  //getStatus();
     
   });
 
