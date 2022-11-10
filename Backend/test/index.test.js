@@ -63,7 +63,7 @@ describe('POST /api/build', async function() {
 		expect(response.headers).to.include.keys(['content-type', 'access-control-allow-origin']);
 		expect(response.headers['content-type']).to.include('application/json');
 		expect(response.headers['access-control-allow-origin']).equal('*');
-		expect(response.body).equal(`(PLACEHOLDER) Building ${ packageName } - Status: 204`);
+		expect(response.body).equal(`Building ${ packageName } - Status: 204`);
 	});
 	// 422 = invalid/missing input, 404 = Not Found, 401 = Unauthorized
 	const statuses = [422, 404, 401];
@@ -84,7 +84,7 @@ describe('POST /api/build', async function() {
 				expect(response.headers).to.include.keys(['content-type', 'access-control-allow-origin']);
 				expect(response.headers['content-type']).to.include('application/json');
 				expect(response.headers['access-control-allow-origin']).equal('*');
-				expect(response.body).equal(`(PLACEHOLDER) Building ${ packageName } - Status: ${ s}`);
+				expect(response.body).equal(`Building ${ packageName } - Status: ${ s}`);
 			
 		});
 	}
