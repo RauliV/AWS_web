@@ -123,57 +123,8 @@
     log = log + newMessage;
   }
 
-  logMessage("Initialized frontend");
-  availablePackages = [
-    {
-      name: "usual template",
-      description: "HELLO FROM DEMO :-)",
-      parameters: [
-        {
-          name: "Region",
-          type: "dropdown",
-          options: ["us-west-1", "us-west-2"],
-        },
-
-        {
-          name: "Access key",
-        },
-        {
-          name: "Secret key",
-          type: "password",
-        },
-      ],
-    },
-    {
-      name: "template with bonus",
-      description: "This is also a template for a EC 2 instance.",
-      parameters: [
-        {
-          name: "Region",
-          type: "dropdown",
-          options: ["us-west-1", "us-west-2"],
-        },
-
-        {
-          name: "Access key",
-        },
-        {
-          name: "Secret key",
-          type: "password",
-        },
-        {
-          name: "Bonus parameter",
-        },
-        {
-          name: "Bonus dropdown",
-          type: "dropdown",
-          options: ["sa", "to", "ra", "re"],
-        },
-      ],
-    },
-  ];
-
   let buildRequestValidation = false;
+  logMessage("Initialized frontend");
 </script>
 
 <h1>One AWS to go, Please!</h1>
