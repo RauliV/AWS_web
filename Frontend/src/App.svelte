@@ -1,302 +1,398 @@
 <script>
-    const Views = {
-        Login: "Login",
-        Main: "Main",
-        PackageSelection: "PackageSelection",
+  const Views = {
+    Login: "Login",
+    Main: "Main",
+    PackageSelection: "PackageSelection",
+  };
+  let currentView = Views.Login;
+
+  let availablePackages = [];
+
+  let log = "";
+
+  let selectedPackage = null;
+
+  // The build parameters.
+  let secretkey = null;
+  let accesskey = null;
+  let region = null;
+
+  let dynamicParams = {};
+
+  // Login parameters
+  let username = null;
+  let password = null;
+  let logInFailed = false;
+
+  function processLogin() {
+    logInFailed = false;
+    let loginInfo = {
+      username: username,
+      password: password,
     };
-    let currentView = Views.Login;
 
-    let availablePackages = [];
+    const path =
+      SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
+    const res = fetch(path, {
+      method: "POST",
+      body: JSON.stringify(loginInfo),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.status == 200) {
+        logMessage("Entered main view from login screen");
+        currentView = Views.Main;
+        username = "";
+        password = "";
+      } else {
+        logInFailed = true;
+      }
+    });
+  }
 
-    let log = "";
-
-    console.log(availablePackages);
-    console.log(typeof availablePackages);
-
-    let selectedPackage = null;
-
-    // The build parameters.
-    let secretkey = null;
-    let accesskey = null;
-    let region = null;
-
-    // Login parameters
-    let username = null;
-    let password = null;
-    let logInFailed = false;
-
-    function processLogin() {
-        logInFailed = false;
-        let loginInfo = {
-            username: username, 
-            password: password
-        };
-
-        const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
-        const res = fetch(path, {
-            method: "POST",
-            body: JSON.stringify(loginInfo),
-            headers: {
-                "Content-Type": "application/json"
-            },
-        }).then((res) => { 
-            if (res.status == 200) {
-                logMessage("Entered main view from login screen");
-                currentView = Views.Main;
-                username = "";
-                password = "";
-            } else {
-                logInFailed = true;
-            }
-        })
-    }
-
-    function startNewEnvironment() {
-        logMessage("Starting new environment");
-        const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/list";
-        const response = fetch(path)
-            .then((response) => response.json())
-            .then((data) => {
-                logMessage("Available package data fetched from backend");
-                availablePackages = [];
-                selectedPackage = null;
-                availablePackages = Array.from(data.templates);
-                currentView = Views.PackageSelection;
-            })
-            .catch((error) => {
-                logMessage(error);
-                availablePackages = [];
-                selectedPackage = null;
-                return [];
-            });
-    }
-
-    function returnToMain() {
-        logMessage("Returned to main view from package selection screen");
+  function startNewEnvironment() {
+    logMessage("Starting new environment");
+    const path =
+      SERVER_CONNECTION + "://" + window.location.hostname + "/api/list";
+    const response = fetch(path)
+      .then((response) => response.json())
+      .then((data) => {
+        logMessage("Available package data fetched from backend");
         availablePackages = [];
         selectedPackage = null;
-        currentView = Views.Main;
-            
-        secretkey = null;
-        accesskey = null;
-        region = null;
-            
-    }
-
-    async function sendBuildRequest() {
-        const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/build";
-
-        let buildParameters = {
-            AWS_ACCESS_KEY_ID: accesskey,
-            AWS_SECRET_ACCESS_KEY: secretkey, // We need to figure a secure way to handle this
-            AWS_REGION: region
-        };
-
-        let buildOptions = {
-            package: selectedPackage.name,
-            parameters: buildParameters,
-        };
-
-        const res = await fetch(path, {
-            method: "POST",
-            body: JSON.stringify(buildOptions),
-            headers: {
-                "Content-Type": "application/json"
-            },
-        });
-
-        logMessage("Sent build request to backend");
-        if (res.status == 200) {
-            const json = await res.json();
-            let result = JSON.stringify(json);
-            logMessage("Received response from backend: " + result);
-        } else {
-            logMessage("Backend reported status: " + res.status);
-        }
-
+        availablePackages = Array.from(data.templates);
+        currentView = Views.PackageSelection;
+      })
+      .catch((error) => {
+        logMessage(error);
+        availablePackages = [];
         selectedPackage = null;
-        currentView = Views.Main;
+        return [];
+      });
+  }
+
+  function returnToMain() {
+    logMessage("Returned to main view from package selection screen");
+    availablePackages = [];
+    selectedPackage = null;
+    currentView = Views.Main;
+
+    secretkey = null;
+    accesskey = null;
+    region = null;
+  }
+
+  function resetDynamicParams() {
+    dynamicParams = {};
+    buildRequestValidation = false;
+  }
+
+  async function sendBuildRequest() {
+    const path =
+      SERVER_CONNECTION + "://" + window.location.hostname + "/api/build";
+
+    let buildOptions = {
+      package: selectedPackage.name,
+      parameters: dynamicParams,
+    };
+
+    const res = await fetch(path, {
+      method: "POST",
+      body: JSON.stringify(buildOptions),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    logMessage("Sent build request to backend");
+    if (res.status == 200) {
+      const json = await res.json();
+      let result = JSON.stringify(json);
+      logMessage("Received response from backend: " + result);
+    } else {
+      logMessage("Backend reported status: " + res.status);
     }
 
-    function logMessage(message) {
-        var newMessage = new Date(Date.now()) + " - " + message + "\n";
-        log = log + newMessage;
-    }
+    selectedPackage = null;
+    currentView = Views.Main;
+  }
 
-    logMessage("Initialized frontend");
+  function logMessage(message) {
+    var newMessage = new Date(Date.now()) + " - " + message + "\n";
+    log = log + newMessage;
+  }
+
+  logMessage("Initialized frontend");
+  availablePackages = [
+    {
+      name: "usual template",
+      description: "HELLO FROM DEMO :-)",
+      parameters: [
+        {
+          name: "Region",
+          type: "dropdown",
+          options: ["us-west-1", "us-west-2"],
+        },
+
+        {
+          name: "Access key",
+        },
+        {
+          name: "Secret key",
+          type: "password",
+        },
+      ],
+    },
+    {
+      name: "template with bonus",
+      description: "This is also a template for a EC 2 instance.",
+      parameters: [
+        {
+          name: "Region",
+          type: "dropdown",
+          options: ["us-west-1", "us-west-2"],
+        },
+
+        {
+          name: "Access key",
+        },
+        {
+          name: "Secret key",
+          type: "password",
+        },
+        {
+          name: "Bonus parameter",
+        },
+        {
+          name: "Bonus dropdown",
+          type: "dropdown",
+          options: ["sa", "to", "ra", "re"],
+        },
+      ],
+    },
+  ];
+
+  let buildRequestValidation = false;
 </script>
 
 <h1>One AWS to go, Please!</h1>
 
 {#if currentView == Views.Login}
-  <input bind:value={username} type="text" placeholder="Username"/>
-  <input bind:value={password} type="password" placeholder="Password"/>
+  <input bind:value={username} type="text" placeholder="Username" />
+  <input bind:value={password} type="password" placeholder="Password" />
 
-    {#if logInFailed }
-        <div class="error">Unauthorized</div>
-    {/if}
+  {#if logInFailed}
+    <div class="error">Unauthorized</div>
+  {/if}
 
   <button id="login-button" on:click={processLogin}> Login </button>
 {/if}
 
 {#if currentView == Views.Main}
-    <div class="column-container">
-        <div class="view-column">
-            <button id="start-button" on:click={startNewEnvironment}> Start new environment </button>
-        </div>
-
-        <div class="view-column">
-            <h2 for='log'>Log</h2>
-            <textarea id='log' readonly bind:value={log}></textarea>
-        </div>
+  <div class="column-container">
+    <div class="view-column">
+      <button id="start-button" on:click={startNewEnvironment}>
+        Start new environment
+      </button>
     </div>
+
+    <div class="view-column">
+      <h2 for="log">Log</h2>
+      <textarea id="log" readonly bind:value={log} />
+    </div>
+  </div>
 {/if}
 
-
 {#if currentView == Views.PackageSelection}
-<div class="column-container">
+  <div class="column-container">
     <div class="view-column">
-        <h2>Available packages</h2>
-        <select size='5' single bind:value={selectedPackage}>
-            {#each availablePackages as pkg}
-            <option value={pkg}>
-                {pkg.name}
-            </option>
-            {/each}
-        </select>
-        <button id='returnbtn' on:click={returnToMain}> Return </button>
+      <h2>Available packages</h2>
+      <select size="5" single bind:value={selectedPackage}>
+        {#each availablePackages as pkg}
+          <option value={pkg} on:click={resetDynamicParams}>
+            {pkg.name}
+          </option>
+        {/each}
+      </select>
+      <button id="returnbtn" on:click={returnToMain}> Return </button>
     </div>
-    <div class="view-column">
-        {#if selectedPackage}
+
+    <form
+      class="view-column"
+      id="buildRequestForm"
+      class:buildRequestValidation
+      on:submit|preventDefault={sendBuildRequest}
+    >
+      {#if selectedPackage}
         <h2>Selected package: {selectedPackage.name}</h2>
         <p>{selectedPackage.description}</p>
 
-        <label for="access-key">Access key</label>
-        <input id="access-key" bind:value={accesskey}/>
+        {#each selectedPackage.parameters as param}
+          <label for="dynamic-param">{param.name}</label>
+          {#if param.type == null}
+            <input
+              class="dynamic-param"
+              required
+              bind:value={dynamicParams[param.name]}
+            />
+          {/if}
+          {#if param.type == "password"}
+            <input
+              class="dynamic-param"
+              type="password"
+              required
+              bind:value={dynamicParams[param.name]}
+            />
+          {/if}
+          {#if param.type == "dropdown"}
+            <select
+              class="dynamic-param"
+              required
+              bind:value={dynamicParams[param.name]}
+            >
+              {#each param.options as option}
+                <option value={option}>
+                  {option}
+                </option>
+              {/each}
+            </select>
+          {/if}
+        {/each}
 
-        <label for="region">Region</label>
-        <input id='region' bind:value={region}/>
-
-        <label for="secret-key">Secret key</label>
-        <input id='secret-key' type=password bind:value={secretkey}/>
-
-        {#if accesskey && region && secretkey}
-        <button id="buildbtn" on:click={sendBuildRequest}> Build </button>
-        {/if}
-        {/if}
-    </div>
-</div>
+        <button
+          id="buildbtn"
+          class="btn btn-full"
+          on:click={() => (buildRequestValidation = true)}>Build</button
+        >
+      {/if}
+    </form>
+  </div>
 {/if}
 
 <style>
-:global(body) {
-background-color: #2b2b2b;
-color: #d6d6d6;
-}
+  :global(body) {
+    background-color: #2b2b2b;
+    color: #d6d6d6;
+  }
 
-h1,
-h2 {
+  h1,
+  h2 {
     text-align: center;
-}
+  }
 
-textarea {
+  textarea {
     overflow-y: auto;
     height: 100%;
     max-height: 500px;
     width: 100%;
     resize: none;
     outline: 0px solid transparent !important;
-}
+  }
 
-select {
+  select {
     display: block;
     margin: 0 auto;
-}
+  }
 
-.column-container {
+  .column-container {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     height: 40vh;
-}
+  }
 
-.view-column {
+  .view-column {
     flex: 1;
     position: relative;
-}
+  }
 
-.view-column p {
+  .view-column p {
     text-align: center;
-}
+  }
 
-input {
+  input {
     display: block;
     margin-left: auto;
     margin-right: auto;
-}
+  }
 
-#secret-key,
-#region,
-#access-key {
+  .dynamic-param {
     width: 50%;
     display: block;
     margin: 0 auto;
-}
+  }
 
-label {
+  label {
     margin-top: 5%;
     margin-bottom: 2%;
     text-align: center;
-}
+  }
 
-button{
+  button {
     padding: 10px 50px 10px 50px;
     color: white;
     display: block;
     margin: 0 auto;
     transition-duration: 0.4s;
-}
+  }
 
-button:hover{
+  button:hover {
     background-color: white;
     color: black;
-}
+  }
 
-#login-button {
+  #login-button {
     color: black;
     display: block;
     margin: auto !important;
-}
+  }
 
-#start-button {
+  #start-button {
     color: black;
     width: 50%;
     margin: 20px;
-}
+  }
 
-#buildbtn {
-    background-color: #008CBA;
+  #buildbtn {
+    background-color: #008cba;
     margin-top: 16%;
-}
+  }
 
-#buildbtn:hover {
-    border-color: #008CBA;
-}
+  #buildbtn:hover {
+    border-color: #008cba;
+  }
 
-#returnbtn {
+  #returnbtn {
     background-color: #f44336;
     margin-top: 20%;
-}
+  }
 
-#returnbtn:hover {
+  #returnbtn:hover {
     border-color: #f44336;
-}
+  }
 
-.error {
+  .error {
     display: block;
     margin-left: auto;
     margin-right: auto;
     color: #f00;
     text-align: center;
-}
+  }
+
+  .buildRequestValidation input:invalid {
+    border: 2px solid #c00;
+  }
+
+  .buildRequestValidation input:focus:invalid {
+    outline: 2px solid #c00;
+  }
+
+  .buildRequestValidation select:invalid {
+    border: 2px solid #c00;
+  }
+
+  .buildRequestValidation select:focus:invalid {
+    outline: 2px solid #c00;
+  }
 </style>
