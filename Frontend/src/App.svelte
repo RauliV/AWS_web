@@ -180,12 +180,12 @@
         <p>{selectedPackage.description}</p>
 
         {#each selectedPackage.parameters as param}
-          <label for="dynamic-param">{param.name}</label>
+          <label for="dynamic-param">{param.displayName}</label>
           {#if param.type == null}
             <input
               class="dynamic-param"
               required
-              bind:value={dynamicParams[param.name]}
+              bind:value={dynamicParams[param.internalName]}
             />
           {/if}
           {#if param.type == "password"}
@@ -193,14 +193,14 @@
               class="dynamic-param"
               type="password"
               required
-              bind:value={dynamicParams[param.name]}
+              bind:value={dynamicParams[param.internalName]}
             />
           {/if}
           {#if param.type == "dropdown"}
             <select
               class="dynamic-param"
               required
-              bind:value={dynamicParams[param.name]}
+              bind:value={dynamicParams[param.internalName]}
             >
               {#each param.options as option}
                 <option value={option}>
