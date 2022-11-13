@@ -61,7 +61,7 @@ app.post('/api/build', async (req, res) => {
   }
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.json(`(PLACEHOLDER) Building ${ packageName } - Status: ${ response.status}`);
+  res.json(`Building ${ packageName } - Status: ${ response.status}`);
 });
 
 app.post('/api/auth', async (req, res) => {
