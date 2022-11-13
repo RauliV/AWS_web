@@ -11,12 +11,6 @@
   let log = "";
 
   let selectedPackage = null;
-
-  // The build parameters.
-  let secretkey = null;
-  let accesskey = null;
-  let region = null;
-
   let dynamicParams = {};
 
   // Login parameters
