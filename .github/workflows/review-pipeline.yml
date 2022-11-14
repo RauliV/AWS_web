@@ -38,3 +38,4 @@ jobs:
           NODE_COVERALLS_DEBUG: 1
         with:
           github-token: ${{ secrets.github_token }}
+          path-to-lcov: "./Backend/coverage/lcov.info"
