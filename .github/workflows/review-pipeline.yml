@@ -42,7 +42,7 @@ jobs:
           path-to-lcov: "./Backend/coverage/lcov.info"
     
   finish:
-    needs: test
+    needs: Review-pipeline
     runs-on: ubuntu-latest
     steps:
       - name: Coveralls Finished
