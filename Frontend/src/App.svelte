@@ -188,7 +188,7 @@
               minlength="16"
               maxlength="128"
               pattern = "[\w]+"
-              title="Accepted characers are: a-z, A-Z and 0-9"
+              title="Valid characters: a-z, A-Z and 0-9"
               bind:value={dynamicParams[param.internalName]}
             />
           {:else if param.type == null}
