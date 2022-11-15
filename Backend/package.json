@@ -19,7 +19,8 @@
   },
   "scripts": {
     "test": "mocha --exit",
-    "coverage": "npx c8 --all -r=html -r=text npm test"
+    "coverage": "npx c8 --all -r=html -r=text npm test",
+    "coveralls-report": "c8 report --all -r=text-lcov > coverage/tests.lcov"
   },
   "author": "",
   "license": "ISC",
