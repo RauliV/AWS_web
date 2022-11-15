@@ -33,6 +33,7 @@ jobs:
         run: |
           npm install --silent
           mkdir ./coverage
+          mkdir ./coverage/tmp
           npm run coveralls-report
 
       - name: Coveralls
