@@ -149,7 +149,11 @@ function returnToMain() {
             if (state.conclusion === "success") {
                 logMessage( `Current build status: Success!`);
             } else {
+
                 logMessage(`Current build status: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
+                logMessage(`Error: ${state.errorMessage}`);
+
+
             }
             return;
         } else if (lastStatus === state.status && lastStepName === state.stepName) {

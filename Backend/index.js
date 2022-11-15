@@ -21,7 +21,7 @@ const port = 8080;
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  addLogLine('Sir', 'Good day');
+  //addLogLine('Sir', 'Good day');
   res.send('Good day, Sir!');
 });
 
@@ -63,11 +63,28 @@ async function getStatus(){
   const jobsData = await jobs.json();
   let stepInProgress = '';
   let stepNumber = 0;
+  let errorMessage = '';
   const stepCount = jobsData.jobs[0].steps.length;
   for (const step of jobsData.jobs[0].steps) {
     if (step.status === 'in_progress' || (step.status === 'completed' && step.conclusion === 'failure')) {
       stepInProgress = step.name;
       stepNumber = step.number;
+      if (step.conclusion === 'failure'){
+        const checkRunUrl = jobsData.jobs[0].check_run_url;
+        const checkRunData = await fetch(checkRunUrl, {headers: workflowRunHeaders});
+        const checkRunJson = await checkRunData.json();
+        const annotationsUrl = checkRunJson.output.annotations_url;
+        const annotationsData = await fetch(annotationsUrl, {headers: workflowRunHeaders});
+        const annotationsJson = await annotationsData.json();
+        console.log(annotationsJson);
+
+        errorMessage = annotationsJson[0].message + '/line: ' + annotationsJson[0].start_line;
+        console.log('Error message: ' + errorMessage);
+        // + '\n' + JSON.stringify(jobsData.jobs[0]))
+        // get jobs[0].check_run_url
+        // => get .annotations_url
+        // => .message
+      }
     }
   }
   const returnObject = {
@@ -75,7 +92,8 @@ async function getStatus(){
     conclusion: jobsData.jobs[0].conclusion,
     stepName: stepInProgress,
     stepNumber: stepNumber,
-    stepCount: stepCount
+    stepCount: stepCount,
+    errorMessage: errorMessage,
   };
   return returnObject;
 }
