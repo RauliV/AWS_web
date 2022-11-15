@@ -181,12 +181,22 @@
 
         {#each selectedPackage.parameters as param}
           <label for="dynamic-param">{param.displayName}</label>
-          {#if param.type == null}
+          {#if param.type == null && param.internalName == "AWS_ACCESS_KEY_ID"}
             <input
               class="dynamic-param"
               required
+              minlength="16"
+              maxlength="128"
+              pattern = "[\w]+"
+              title="Accepted characers are: a-z, A-Z and 0-9"
               bind:value={dynamicParams[param.internalName]}
             />
+          {:else if param.type == null}
+            <input
+            class="dynamic-param"
+            required
+            bind:value={dynamicParams[param.internalName]}
+           />
           {/if}
           {#if param.type == "password"}
             <input
