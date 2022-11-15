@@ -7,6 +7,8 @@ jobs:
   Review-pipeline:
     name: Review pipeline
     runs-on: ubuntu-latest
+    env:
+      NODE_COVERALLS_DEBUG: 1
     steps:
       - name: Install Node
         uses: actions/setup-node@v3
@@ -23,13 +25,13 @@ jobs:
       - name: Run frontend tests
         working-directory: ./Frontend
         run: |
-          npm install
+          npm install --silent
           npm run test
 
       - name: Run backend tests
         working-directory: ./Backend
         run: |
-          npm install 
+          npm install --silent
           npm run coverage
 
       - name: Coveralls
