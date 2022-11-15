@@ -32,7 +32,7 @@ jobs:
         working-directory: ./Backend
         run: |
           npm install --silent
-          npm run coverage
+          npm run coveralls-report
 
       - name: Coveralls
         uses: coverallsapp/github-action@1.1.3
