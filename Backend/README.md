@@ -27,6 +27,10 @@ C:\Windows\System32>taskkill /F /IM node.exe
 ```
 npm run coverage
 ```
+The detailed coverage report can be found from the local file:
+```
+./coverage/index.html
+```
 
 # Code quality
 There is static code analysis (ESLint) implemented as part of the review pipeline. The analysis contains eslint:recommended configuraition (https://eslint.org/docs/latest/rules/).

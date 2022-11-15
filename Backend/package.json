@@ -14,22 +14,18 @@
     "mocha": "^10.0.0",
     "mocha-eslint": "^7.0.0",
     "node-fetch": "^3.2.10",
-    "shx": "^0.3.4",
     "sinon": "^14.0.1",
     "supertest": "^6.2.4"
   },
   "scripts": {
-    "test": "nyc mocha --exit",
-    "test-coverage": "nyc report --all --reporter=text-lcov | coveralls",
-    "coverage": "npx c8 --all -r=text-lcov -r=text npm test | coveralls",
-    "coveralls": "npm run coverage && shx cat ./coverage/lcov.info | node ./bin/coveralls.cjs --verbose"
+    "test": "mocha --exit",
+    "coverage": "npx c8 --all -r=html -r=text npm test"
   },
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
     "coveralls": "^3.1.1",
-    "eslint": "^8.26.0",
-    "nyc": "^15.1.0"
+    "eslint": "^8.26.0"
   }
 }
