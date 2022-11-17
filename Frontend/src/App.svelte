@@ -1,5 +1,4 @@
 <script>
-
   const Views = {
     Login: "Login",
     Main: "Main",
@@ -30,9 +29,9 @@
   let lastStepName = '';
 
   const update = () => {
-      if (updating) {
-          getBuildStatus();
-      }
+    if (updating) {
+      getBuildStatus();
+    }
   }
 
   let clear
@@ -41,146 +40,143 @@
     clear = setInterval(update, 5000)
   }
 
-
-
   function processLogin() {
-      logInFailed = false;
-      let loginInfo = {
-        username: username,
-        password: password,
-      };
+    logInFailed = false;
+    let loginInfo = {
+      username: username,
+      password: password,
+    };
 
-      const path =
-        SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
-      const res = fetch(path, {
-        method: "POST",
-        body: JSON.stringify(loginInfo),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then((res) => {
-        if (res.status == 200) {
-          logMessage("Entered main view from login screen");
-          currentView = Views.Main;
-          username = "";
-          password = "";
-        } else {
-          logInFailed = true;
-        }
-      });
-    }
-
-    function startNewEnvironment() {
-      logMessage("Starting new environment");
-      const path =
-        SERVER_CONNECTION + "://" + window.location.hostname + "/api/list";
-      const response = fetch(path)
-        .then((response) => response.json())
-        .then((data) => {
-          logMessage("Available package data fetched from backend");
-          availablePackages = [];
-          selectedPackage = null;
-          availablePackages = Array.from(data.templates);
-          currentView = Views.PackageSelection;
-        })
-        .catch((error) => {
-          logMessage(error);
-          availablePackages = [];
-          selectedPackage = null;
-          return [];
-        });
-    }
-
-    function returnToMain() {
-      logMessage("Returned to main view from package selection screen");
-      availablePackages = [];
-      selectedPackage = null;
-      currentView = Views.Main;
-
-      secretkey = null;
-      accesskey = null;
-      region = null;
-    }
-
-    function resetDynamicParams() {
-      dynamicParams = {};
-      buildRequestValidation = false;
-    }
-
-    async function sendBuildRequest() {
-      const path =
-        SERVER_CONNECTION + "://" + window.location.hostname + "/api/build";
-
-      let buildOptions = {
-        package: selectedPackage.name,
-        parameters: dynamicParams,
-      };
-
-      const res = await fetch(path, {
-        method: "POST",
-        body: JSON.stringify(buildOptions),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      logMessage("Sent build request to backend");
+    const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
+    const res = fetch(path, {
+      method: "POST",
+      body: JSON.stringify(loginInfo),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
       if (res.status == 200) {
-        const json = await res.json();
-        let result = JSON.stringify(json);
-        logMessage("Received response from backend: " + result);
-        updating = true;
+        logMessage("Entered main view from login screen");
+        currentView = Views.Main;
+        username = "";
+        password = "";
       } else {
-        logMessage("Backend reported status: " + res.status);
+        logInFailed = true;
       }
+    });
+  }
 
-      selectedPackage = null;
-      currentView = Views.Main;
+  function startNewEnvironment() {
+    logMessage("Starting new environment");
+    const path =
+      SERVER_CONNECTION + "://" + window.location.hostname + "/api/list";
+    const response = fetch(path)
+      .then((response) => response.json())
+      .then((data) => {
+        logMessage("Available package data fetched from backend");
+        availablePackages = [];
+        selectedPackage = null;
+        availablePackages = Array.from(data.templates);
+        currentView = Views.PackageSelection;
+      })
+      .catch((error) => {
+        logMessage(error);
+        availablePackages = [];
+        selectedPackage = null;
+        return [];
+      });
+  }
+
+  function returnToMain() {
+    logMessage("Returned to main view from package selection screen");
+    availablePackages = [];
+    selectedPackage = null;
+    currentView = Views.Main;
+
+    secretkey = null;
+    accesskey = null;
+    region = null;
+  }
+
+  function resetDynamicParams() {
+    dynamicParams = {};
+    buildRequestValidation = false;
+  }
+
+  async function sendBuildRequest() {
+    const path =
+      SERVER_CONNECTION + "://" + window.location.hostname + "/api/build";
+
+    let buildOptions = {
+      package: selectedPackage.name,
+      parameters: dynamicParams,
+    };
+
+    const res = await fetch(path, {
+      method: "POST",
+      body: JSON.stringify(buildOptions),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    logMessage("Sent build request to backend");
+    if (res.status == 200) {
+      const json = await res.json();
+      let result = JSON.stringify(json);
+      logMessage("Received response from backend: " + result);
+      updating = true;
+    } else {
+      logMessage("Backend reported status: " + res.status);
     }
 
-    async function getBuildStatus(/*buildId*/) {
-      const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
-      const res = await fetch(path);
-      if( res.status == 200 ){
-          let state = await res.json();
-          if(state.status === 'completed') {
-              updating = false;  // We got the last status.
-              lastStatus = '';
-              lastStepName = '';
-              if (state.conclusion === "success") {
-                  logMessage( `Current build status: Success!`);
-              } else {
+    selectedPackage = null;
+    currentView = Views.Main;
+  }
 
-                  logMessage(`Current build status: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
-                  logMessage(`Error: ${state.errorMessage}`);
+  async function getBuildStatus(/*buildId*/) {
+    const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
+    const res = await fetch(path);
+    if( res.status == 200 ){
+        let state = await res.json();
+        if(state.status === 'completed') {
+            updating = false;  // We got the last status.
+            lastStatus = '';
+            lastStepName = '';
+            if (state.conclusion === "success") {
+                logMessage( `Current build status: Success!`);
+            } else {
+
+                logMessage(`Current build status: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
+                logMessage(`Error: ${state.errorMessage}`);
 
 
-              }
-              return;
-          } else if (lastStatus === state.status && lastStepName === state.stepName) {
-              // Status did not change, not logging.
-              return;
-          } else if (state.status === 'in_progress') {
-              lastStatus = state.status;
-              lastStepName= state.stepName;
-              logMessage( `Current build status: In Progress (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
-              return;
-          } else {
-              lastStatus = state.status;
-              lastStepName= state.stepName;
-              logMessage( `Current build status: ${state.status}`);
-              return;
-          }
-      }
+            }
+            return;
+        } else if (lastStatus === state.status && lastStepName === state.stepName) {
+            // Status did not change, not logging.
+            return;
+        } else if (state.status === 'in_progress') {
+            lastStatus = state.status;
+            lastStepName= state.stepName;
+            logMessage( `Current build status: In Progress (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
+            return;
+        } else {
+            lastStatus = state.status;
+            lastStepName= state.stepName;
+            logMessage( `Current build status: ${state.status}`);
+            return;
+        }
     }
+  }
 
-    function logMessage(message) {
-      var newMessage = new Date(Date.now()).toISOString().substring(0, 23) + " - " + message + "\n";
-      log = log + newMessage;
-    }
+  function logMessage(message) {
+    var newMessage = new Date(Date.now()).toISOString().substring(0, 23) + " - " + message + "\n";
+    log = log + newMessage;
+  }
 
-    let buildRequestValidation = false;
-    logMessage("Initialized frontend");
+  let buildRequestValidation = false;
+  logMessage("Initialized frontend");
 </script>
 
 <h1>One AWS to go, Please!</h1>
