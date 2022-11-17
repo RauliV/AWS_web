@@ -133,11 +133,11 @@ app.post('/api/auth', async (req, res) => {
   if (users.includes(username)) {
     res.status(200);
   } else {
-      res.status(404);
-    }
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.json('Data: no-data');
+    res.status(404);
+  }
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.json('Data: no-data');
 });
 
 app.listen(port, () => {

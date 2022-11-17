@@ -11,7 +11,7 @@ import callerId from 'caller-id';
  */
 
 export async function addLogLine(userId =' -', description = '-'){
-  
+
     const logFile = 'logs/actionlog.txt';
     const logDir = 'logs';
     let content = '';
