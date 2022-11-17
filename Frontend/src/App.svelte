@@ -13,10 +13,32 @@
   let selectedPackage = null;
   let dynamicParams = {};
 
+  // The build parameters.
+  let secretkey = null;
+  let accesskey = null;
+  let region = null;
+
   // Login parameters
   let username = null;
   let password = null;
   let logInFailed = false;
+
+  // For updating the build status
+  let updating = false;
+  let lastStatus = '';
+  let lastStepName = '';
+
+  const update = () => {
+    if (updating) {
+      getBuildStatus();
+    }
+  }
+
+  let clear
+  $: {
+    clearInterval(clear)
+    clear = setInterval(update, 5000)
+  }
 
   function processLogin() {
     logInFailed = false;
@@ -25,8 +47,7 @@
       password: password,
     };
 
-    const path =
-      SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
+    const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
     const res = fetch(path, {
       method: "POST",
       body: JSON.stringify(loginInfo),
@@ -104,6 +125,7 @@
       const json = await res.json();
       let result = JSON.stringify(json);
       logMessage("Received response from backend: " + result);
+      updating = true;
     } else {
       logMessage("Backend reported status: " + res.status);
     }
@@ -112,8 +134,44 @@
     currentView = Views.Main;
   }
 
+  async function getBuildStatus(/*buildId*/) {
+    const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
+    const res = await fetch(path);
+    if( res.status == 200 ){
+        let state = await res.json();
+        if(state.status === 'completed') {
+            updating = false;  // We got the last status.
+            lastStatus = '';
+            lastStepName = '';
+            if (state.conclusion === "success") {
+                logMessage( `Current build status: Success!`);
+            } else {
+
+                logMessage(`Current build status: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
+                logMessage(`Error: ${state.errorMessage}`);
+
+
+            }
+            return;
+        } else if (lastStatus === state.status && lastStepName === state.stepName) {
+            // Status did not change, not logging.
+            return;
+        } else if (state.status === 'in_progress') {
+            lastStatus = state.status;
+            lastStepName= state.stepName;
+            logMessage( `Current build status: In Progress (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
+            return;
+        } else {
+            lastStatus = state.status;
+            lastStepName= state.stepName;
+            logMessage( `Current build status: ${state.status}`);
+            return;
+        }
+    }
+  }
+
   function logMessage(message) {
-    var newMessage = new Date(Date.now()) + " - " + message + "\n";
+    var newMessage = new Date(Date.now()).toISOString().substring(0, 23) + " - " + message + "\n";
     log = log + newMessage;
   }
 

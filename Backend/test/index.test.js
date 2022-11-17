@@ -60,10 +60,9 @@ describe('POST /api/build', async function() {
 		
 		assert(fetchStub.calledOnce);
 		expect(response.status).equal(200);
-		expect(response.headers).to.include.keys(['content-type', 'access-control-allow-origin']);
+		expect(response.headers).to.include.keys(['content-type']);
 		expect(response.headers['content-type']).to.include('application/json');
-		expect(response.headers['access-control-allow-origin']).equal('*');
-		expect(response.body).equal(`Building ${ packageName } - Status: 204`);
+		expect(response.body).equal(`Triggered build action successfully - ${packageName}`);
 	});
 	// 422 = invalid/missing input, 404 = Not Found, 401 = Unauthorized
 	const statuses = [422, 404, 401];
@@ -81,11 +80,40 @@ describe('POST /api/build', async function() {
 
 				assert(fetchStub.calledOnce);
 				expect(response.status).equal(s);
-				expect(response.headers).to.include.keys(['content-type', 'access-control-allow-origin']);
+				expect(response.headers).to.include.keys(['content-type', 'connection', 'content-length', 'date', 'etag', 'x-powered-by']);
 				expect(response.headers['content-type']).to.include('application/json');
-				expect(response.headers['access-control-allow-origin']).equal('*');
-				expect(response.body).equal(`Building ${ packageName } - Status: ${ s}`);
-			
+				expect(response.body).equal(`Triggered build action failed - ${packageName}`);
 		});
 	}
 });
+
+
+describe('POST /api/status', async function() {
+	this.timeout(5000);
+	beforeEach(() => {
+        sandbox.restore();
+    });
+
+	const buildParameters = {
+		AWS_ACCESS_KEY_ID: 'These',
+		AWS_SECRET_ACCESS_KEY: 'don\'t',
+		AWS_REGION: 'matter for now (if these are not empty)'
+	};
+
+	it('Status query performed successfully', async function() {
+		const fetchStub = sandbox.stub(indexFactory, 'triggerBuild').resolves({status: 204});
+		const packageName = 'TEMPLATE-EC2';
+		const buildOptions = {
+			package: packageName,
+			parameters: buildParameters,
+		};
+
+		const response = await request(app).post('/api/build').send(buildOptions);
+		
+		assert(fetchStub.calledOnce);
+		expect(response.status).equal(200);
+		expect(response.headers).to.include.keys(['content-type']);
+		expect(response.headers['content-type']).to.include('application/json');
+	});
+});
+
