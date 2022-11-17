@@ -54,8 +54,9 @@ async function getStatus(){
   const getWorkFlowsUrl = `https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/runs${queryString}`;
 
 
-  const workflowRunHeaders = {'Accept' : 'application/vnd.github+json', 'Authorization' : `Bearer ${ token}`};
-  
+  const workflowRunHeaders = {'Accept' : 'application/vnd.github+json', 'Authorization' : `Bearer ${ token}`};//,
+  //'Content-Type' : 'application/json', 'Access-Control-Allow-Origin' : '*'};
+
   const workflowRuns = await fetch(getWorkFlowsUrl, {headers: workflowRunHeaders});
   const jsonData = await workflowRuns.json();
   const jobs_url = jsonData.workflow_runs[0].jobs_url;
@@ -76,14 +77,7 @@ async function getStatus(){
         const annotationsUrl = checkRunJson.output.annotations_url;
         const annotationsData = await fetch(annotationsUrl, {headers: workflowRunHeaders});
         const annotationsJson = await annotationsData.json();
-        console.log(annotationsJson);
-
         errorMessage = annotationsJson[0].message + '/line: ' + annotationsJson[0].start_line;
-        console.log('Error message: ' + errorMessage);
-        // + '\n' + JSON.stringify(jobsData.jobs[0]))
-        // get jobs[0].check_run_url
-        // => get .annotations_url
-        // => .message
       }
     }
   }
