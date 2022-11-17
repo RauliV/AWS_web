@@ -56,7 +56,8 @@ async function templateData() {
             return data;
         }
         const description = JSON.parse(atob(res2.json.content)).description;
-        data.templates.push({'name': t, 'description': description});
+        const parameters = JSON.parse(atob(res2.json.content)).parameters;
+        data.templates.push({'name': t, 'description': description, 'parameters': parameters});
     }
     return data;
 }

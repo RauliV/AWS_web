@@ -83,7 +83,6 @@ describe('POST /api/build', async function() {
 				expect(response.headers).to.include.keys(['content-type', 'connection', 'content-length', 'date', 'etag', 'x-powered-by']);
 				expect(response.headers['content-type']).to.include('application/json');
 				expect(response.body).equal(`Triggered build action failed - ${packageName}`);
-			
 		});
 	}
 });

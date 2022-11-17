@@ -29,7 +29,7 @@ describe('GitHub calls', function() {
         expect(response).to.have.all.keys('body', 'status', 'statusText', 'templates');
         expect(response.templates.length).is.greaterThan(0);
         for (const t of response.templates) {
-            expect(t).keys('name', 'description');
+            expect(t).keys('name', 'description', 'parameters');
             expect(t.name).to.not.equal('');
             expect(t.description).to.not.equal('');
         }
