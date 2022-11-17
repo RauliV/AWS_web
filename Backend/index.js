@@ -75,7 +75,7 @@ async function getStatus(){
         const annotationsUrl = checkRunJson.output.annotations_url;
         const annotationsData = await fetch(annotationsUrl, {headers: workflowRunHeaders});
         const annotationsJson = await annotationsData.json();
-        errorMessage = `${annotationsJson[0].message}/line: ${annotationsJson[0].start_line}`;
+        errorMessage = `${annotationsJson[0].message} / line: ${annotationsJson[0].start_line}`;
       }
     }
   }
