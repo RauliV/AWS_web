@@ -38,7 +38,7 @@ async function triggerBuild(buildUrl, options) {
 }
 
 
-app.get('/api/status', async(req, res) => {
+app.get('/api/status', async (req, res) => {
   const state = await getStatus();
   res.status(200);
   res.json(state);
