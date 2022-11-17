@@ -1,6 +1,5 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { addLogLine } from './log.js';
 import { gitFactory } from './github.js';
 import 'node-fetch';
 import fetch from 'node-fetch';
@@ -55,8 +54,7 @@ async function getStatus(){
 
 
   const workflowRunHeaders = {'Accept' : 'application/vnd.github+json', 'Authorization' : `Bearer ${ token}`};//,
-  //'Content-Type' : 'application/json', 'Access-Control-Allow-Origin' : '*'};
-
+  
   const workflowRuns = await fetch(getWorkFlowsUrl, {headers: workflowRunHeaders});
   const jsonData = await workflowRuns.json();
   const jobs_url = jsonData.workflow_runs[0].jobs_url;
@@ -77,7 +75,7 @@ async function getStatus(){
         const annotationsUrl = checkRunJson.output.annotations_url;
         const annotationsData = await fetch(annotationsUrl, {headers: workflowRunHeaders});
         const annotationsJson = await annotationsData.json();
-        errorMessage = annotationsJson[0].message + '/line: ' + annotationsJson[0].start_line;
+        errorMessage = `${annotationsJson[0].message}/line: ${annotationsJson[0].start_line}`;
       }
     }
   }
@@ -109,17 +107,13 @@ app.post('/api/build', async (req, res) => {
     })
   };
   const response = await indexFactory.triggerBuild(mockBuildUrl, options);
-
-  if (response.status === 204) {
-    res.status(200);
-
-
-  res.json(`Triggered build action successfully - ${packageName}`);
-  // eslint-disable-next-line no-promise-executor-return
-  await new Promise(r => setTimeout(r, 1000));
-  getStatus();
-    
+  if (response.status !== 204) {
+    res.status(response.status);
+    res.json(`Triggered build action failed - ${packageName}`);
+    return;
   }
+  res.status(200);
+  res.json(`Triggered build action successfully - ${packageName}`);
 });
 
 app.post('/api/auth', async (req, res) => {

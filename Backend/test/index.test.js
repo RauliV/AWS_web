@@ -60,9 +60,8 @@ describe('POST /api/build', async function() {
 		
 		assert(fetchStub.calledOnce);
 		expect(response.status).equal(200);
-		expect(response.headers).to.include.keys(['content-type', 'access-control-allow-origin']);
+		expect(response.headers).to.include.keys(['content-type']);
 		expect(response.headers['content-type']).to.include('application/json');
-		expect(response.headers['access-control-allow-origin']).equal('*');
 		expect(response.body).equal(`Triggered build action successfully - ${packageName}`);
 	});
 	// 422 = invalid/missing input, 404 = Not Found, 401 = Unauthorized
@@ -81,10 +80,9 @@ describe('POST /api/build', async function() {
 
 				assert(fetchStub.calledOnce);
 				expect(response.status).equal(s);
-				expect(response.headers).to.include.keys(['content-type', 'access-control-allow-origin']);
+				expect(response.headers).to.include.keys(['content-type', 'connection', 'content-length', 'date', 'etag', 'x-powered-by']);
 				expect(response.headers['content-type']).to.include('application/json');
-				expect(response.headers['access-control-allow-origin']).equal('*');
-				expect(response.body).equal(`Triggered build action successfully - ${packageName}`);
+				expect(response.body).equal(`Triggered build action failed - ${packageName}`);
 			
 		});
 	}
@@ -115,10 +113,8 @@ describe('POST /api/status', async function() {
 		
 		assert(fetchStub.calledOnce);
 		expect(response.status).equal(200);
-		expect(response.headers).to.include.keys(['content-type']);//, 'access-control-allow-origin']);
+		expect(response.headers).to.include.keys(['content-type']);
 		expect(response.headers['content-type']).to.include('application/json');
-		//expect(response.headers['access-control-allow-origin']).equal('*');
-		//expect(response.body).equal(`Triggered build action successfully - ${packageName}`);
 	});
 });
 
