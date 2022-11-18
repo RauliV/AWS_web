@@ -194,7 +194,7 @@
 
     let messageObj = {
       message: message,
-      color: color,
+      style: color,
     };
     log.push(messageObj);
 
@@ -250,7 +250,7 @@
       <div>
         <ul bind:this={logScrollbar}>
           {#each log as messageObj}
-            <li style={messageObj.color}>{messageObj.message}</li>
+            <li style={messageObj.style}>{messageObj.message}</li>
           {/each}
         </ul>
       </div>
