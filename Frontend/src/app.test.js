@@ -4,6 +4,8 @@ import '@testing-library/jest-dom'
 import { render, fireEvent, screen } from '@testing-library/svelte'
 
 import App from './App.svelte';
+import { onMount, tick} from "svelte";
+
 
 test('shows proper heading when rendered', () => {
     render(App)
