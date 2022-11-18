@@ -213,7 +213,9 @@
   }
 
   const scrollToBottom = async (node) => {
-    node.scroll({ top: node.scrollHeight, behavior: "smooth" });
+    if (node != undefined) {
+      node.scroll({ top: node.scrollHeight, behavior: "smooth" });
+    }
   };
   let logScrollbar;
   onMount(() => scrollToBottom(logScrollbar));
