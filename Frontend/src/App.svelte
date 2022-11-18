@@ -106,6 +106,23 @@
     buildRequestValidation = false;
   }
 
+  function on_key_down(event) {
+    // Assuming you only want to handle the first press, we early
+    // return to skip.
+    if (event.repeat) return;
+
+    switch (event.key) {
+      case "Enter":
+        if (currentView == Views.Login) {
+          // By using `preventDefault`, it tells the Browser not to handle the
+          // key stroke for its own shortcuts or text input.
+          event.preventDefault();
+          processLogin();
+        }
+        break;
+    }
+  }
+
   async function sendBuildRequest() {
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/build";
@@ -223,6 +240,8 @@
   let buildRequestValidation = false;
   logMessage("Initialized frontend", "white");
 </script>
+
+<svelte:window on:keydown={on_key_down} />
 
 <h1>One AWS to go, Please!</h1>
 
