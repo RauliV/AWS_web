@@ -1,4 +1,6 @@
 <script>
+  import { onMount, tick } from "svelte";
+
   const Views = {
     Login: "Login",
     Main: "Main",
@@ -8,7 +10,7 @@
 
   let availablePackages = [];
 
-  let log = "";
+  let log = [];
 
   let selectedPackage = null;
   let dynamicParams = {};
@@ -25,19 +27,19 @@
 
   // For updating the build status
   let updating = false;
-  let lastStatus = '';
-  let lastStepName = '';
+  let lastStatus = "";
+  let lastStepName = "";
 
   const update = () => {
     if (updating) {
       getBuildStatus();
     }
-  }
+  };
 
-  let clear
+  let clear;
   $: {
-    clearInterval(clear)
-    clear = setInterval(update, 5000)
+    clearInterval(clear);
+    clear = setInterval(update, 5000);
   }
 
   function processLogin() {
@@ -47,7 +49,8 @@
       password: password,
     };
 
-    const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
+    const path =
+      SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
     const res = fetch(path, {
       method: "POST",
       body: JSON.stringify(loginInfo),
@@ -56,7 +59,7 @@
       },
     }).then((res) => {
       if (res.status == 200) {
-        logMessage("Entered main view from login screen");
+        logMessage("Entered main view from login screen", "white");
         currentView = Views.Main;
         username = "";
         password = "";
@@ -67,20 +70,20 @@
   }
 
   function startNewEnvironment() {
-    logMessage("Starting new environment");
+    logMessage("Starting new environment", "white");
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/list";
     const response = fetch(path)
       .then((response) => response.json())
       .then((data) => {
-        logMessage("Available package data fetched from backend");
+        logMessage("Available package data fetched from backend", "turquoise");
         availablePackages = [];
         selectedPackage = null;
         availablePackages = Array.from(data.templates);
         currentView = Views.PackageSelection;
       })
       .catch((error) => {
-        logMessage(error);
+        logMessage(error, "salmon");
         availablePackages = [];
         selectedPackage = null;
         return [];
@@ -88,7 +91,7 @@
   }
 
   function returnToMain() {
-    logMessage("Returned to main view from package selection screen");
+    logMessage("Returned to main view from package selection screen", "white");
     availablePackages = [];
     selectedPackage = null;
     currentView = Views.Main;
@@ -120,14 +123,14 @@
       },
     });
 
-    logMessage("Sent build request to backend");
+    logMessage("Sent build request to backend", "white");
     if (res.status == 200) {
       const json = await res.json();
       let result = JSON.stringify(json);
-      logMessage("Received response from backend: " + result);
+      logMessage("Received response from backend: " + result, "turquoise");
       updating = true;
     } else {
-      logMessage("Backend reported status: " + res.status);
+      logMessage("Backend reported status: " + res.status, "yellow");
     }
 
     selectedPackage = null;
@@ -135,48 +138,88 @@
   }
 
   async function getBuildStatus(/*buildId*/) {
-    const path = SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
+    const path =
+      SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
     const res = await fetch(path);
-    if( res.status == 200 ){
-        let state = await res.json();
-        if(state.status === 'completed') {
-            updating = false;  // We got the last status.
-            lastStatus = '';
-            lastStepName = '';
-            if (state.conclusion === "success") {
-                logMessage( `Current build status: Success!`);
-            } else {
-
-                logMessage(`Current build status: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
-                logMessage(`Error: ${state.errorMessage}`);
-
-
-            }
-            return;
-        } else if (lastStatus === state.status && lastStepName === state.stepName) {
-            // Status did not change, not logging.
-            return;
-        } else if (state.status === 'in_progress') {
-            lastStatus = state.status;
-            lastStepName= state.stepName;
-            logMessage( `Current build status: In Progress (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`);
-            return;
+    if (res.status == 200) {
+      let state = await res.json();
+      if (state.status === "completed") {
+        updating = false; // We got the last status.
+        lastStatus = "";
+        lastStepName = "";
+        if (state.conclusion === "success") {
+          logMessage(`Current build status: Success!`, "lime");
         } else {
-            lastStatus = state.status;
-            lastStepName= state.stepName;
-            logMessage( `Current build status: ${state.status}`);
-            return;
+          logMessage(
+            `Current build status: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
+            "salmon"
+          );
+          logMessage(`Error: ${state.errorMessage}`, "salmon");
         }
+        return;
+      } else if (
+        lastStatus === state.status &&
+        lastStepName === state.stepName
+      ) {
+        // Status did not change, not logging.
+        return;
+      } else if (state.status === "in_progress") {
+        lastStatus = state.status;
+        lastStepName = state.stepName;
+        logMessage(
+          `Current build status: In Progress (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
+          "turquoise"
+        );
+        return;
+      } else {
+        lastStatus = state.status;
+        lastStepName = state.stepName;
+        logMessage(`Current build status: ${state.status}`, "turquoise");
+        return;
+      }
     }
   }
 
-  function logMessage(message) {
-    var newMessage = new Date(Date.now()).toISOString().substring(0, 23) + " - " + message + "\n";
-    log = log + newMessage;
+  async function logMessage(message, color = "white") {
+    message =
+      new Date(Date.now()).toISOString().substring(0, 23) +
+      " - " +
+      message +
+      "\n";
+
+    // format color string for style
+    if (color.substring(0, 6) != "color:") {
+      color = "color:" + color;
+    }
+
+    let messageObj = {
+      message: message,
+      color: color,
+    };
+    log.push(messageObj);
+
+    if (log.length > 200) {
+      log.splice(0, 1);
+    }
+
+    log = log;
+    await tick();
+    scrollToBottom(logScrollbar);
   }
 
+  function clearLog() {
+    log = [];
+    logMessage("Cleared log", "white");
+  }
+
+  const scrollToBottom = async (node) => {
+    node.scroll({ top: node.scrollHeight, behavior: "smooth" });
+  };
+  let logScrollbar;
+  onMount(() => scrollToBottom(logScrollbar));
+
   let buildRequestValidation = false;
-  logMessage("Initialized frontend");
+  logMessage("Initialized frontend", "white");
 </script>
 
 <h1>One AWS to go, Please!</h1>
@@ -202,7 +245,14 @@
 
     <div class="view-column">
       <h2 for="log">Log</h2>
-      <textarea id="log" readonly bind:value={log} />
+      <div>
+        <ul bind:this={logScrollbar}>
+          {#each log as messageObj}
+            <li style={messageObj.color}>{messageObj.message}</li>
+          {/each}
+        </ul>
+      </div>
+      <button id="clearlogbtn" on:click={clearLog}> Clear log </button>
     </div>
   </div>
 {/if}
@@ -239,16 +289,16 @@
               required
               minlength="16"
               maxlength="128"
-              pattern = "[\w]+"
+              pattern="[\w]+"
               title="Valid characters: a-z, A-Z and 0-9"
               bind:value={dynamicParams[param.internalName]}
             />
           {:else if param.type == null}
             <input
-            class="dynamic-param"
-            required
-            bind:value={dynamicParams[param.internalName]}
-           />
+              class="dynamic-param"
+              required
+              bind:value={dynamicParams[param.internalName]}
+            />
           {/if}
           {#if param.type == "password"}
             <input
@@ -292,15 +342,6 @@
   h1,
   h2 {
     text-align: center;
-  }
-
-  textarea {
-    overflow-y: auto;
-    height: 100%;
-    max-height: 500px;
-    width: 100%;
-    resize: none;
-    outline: 0px solid transparent !important;
   }
 
   select {
@@ -362,9 +403,13 @@
   }
 
   #start-button {
-    color: black;
+    background-color: #2bb368;
     width: 50%;
     margin: 20px;
+  }
+
+  #start-button:hover {
+    border-color: #2bb368;
   }
 
   #buildbtn {
@@ -383,6 +428,15 @@
 
   #returnbtn:hover {
     border-color: #f44336;
+  }
+
+  #clearlogbtn {
+    background-color: #36a8f4;
+    margin-top: 20%;
+  }
+
+  #clearlogbtn:hover {
+    border-color: #36a8f4;
   }
 
   .error {
@@ -407,5 +461,20 @@
 
   .buildRequestValidation select:focus:invalid {
     outline: 2px solid #c00;
+  }
+
+  ul {
+    list-style: none;
+    max-height: 400px;
+    min-height: 400px;
+    margin: 0;
+    overflow: auto;
+    padding: 0;
+    text-indent: 10px;
+    background-color: #383838;
+  }
+
+  li {
+    line-height: 25px;
   }
 </style>
