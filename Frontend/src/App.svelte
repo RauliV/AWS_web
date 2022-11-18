@@ -30,6 +30,9 @@
   let lastStatus = "";
   let lastStepName = "";
 
+  // bool to ensure that backend calls aren't performed multiple times
+  let waitingForActionToResolve = false;
+
   const update = () => {
     if (updating) {
       getBuildStatus();
@@ -43,6 +46,9 @@
   }
 
   function processLogin() {
+    if (waitingForActionToResolve) return;
+    waitingForActionToResolve = true;
+
     logInFailed = false;
     let loginInfo = {
       username: username,
@@ -66,10 +72,14 @@
       } else {
         logInFailed = true;
       }
+      waitingForActionToResolve = false;
     });
   }
 
   function startNewEnvironment() {
+    if (waitingForActionToResolve) return;
+    waitingForActionToResolve = true;
+
     logMessage("Starting new environment", "white");
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/list";
@@ -81,11 +91,13 @@
         selectedPackage = null;
         availablePackages = Array.from(data.templates);
         currentView = Views.PackageSelection;
+        waitingForActionToResolve = false;
       })
       .catch((error) => {
         logMessage(error, "salmon");
         availablePackages = [];
         selectedPackage = null;
+        waitingForActionToResolve = false;
         return [];
       });
   }
@@ -124,6 +136,9 @@
   }
 
   async function sendBuildRequest() {
+    if (waitingForActionToResolve) return;
+    waitingForActionToResolve = true;
+
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/build";
 
@@ -152,6 +167,7 @@
 
     selectedPackage = null;
     currentView = Views.Main;
+    waitingForActionToResolve = false;
   }
 
   async function getBuildStatus(/*buildId*/) {
