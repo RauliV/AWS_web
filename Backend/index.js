@@ -95,7 +95,6 @@ app.post('/api/build', async (req, res) => {
   const packageName = json.package;
   const packageParams = json.parameters;
   const mockBuild = json.mock;
-  console.log(mockBuild);
 
   const options = {
     method: 'post',
@@ -108,6 +107,7 @@ app.post('/api/build', async (req, res) => {
       inputs: packageParams
     })
   };
+
   let response;
 
   if(mockBuild === true){
