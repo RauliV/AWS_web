@@ -33,6 +33,9 @@
   // bool to ensure that backend calls aren't performed multiple times
   let waitingForActionToResolve = false;
 
+  // bool for mock build checkbox state
+  let mockAction = false;
+
   const update = () => {
     if (updating) {
       getBuildStatus();
@@ -74,6 +77,7 @@
       }
       waitingForActionToResolve = false;
     });
+
   }
 
   function startNewEnvironment() {
@@ -145,6 +149,7 @@
     let buildOptions = {
       package: selectedPackage.name,
       parameters: dynamicParams,
+      mock: mockAction
     };
 
     const res = await fetch(path, {
@@ -359,6 +364,11 @@
             </select>
           {/if}
         {/each}
+
+        <label>
+          <input type=checkbox bind:checked={mockAction}>
+          Run mock build
+        </label>
 
         <button
           id="buildbtn"
