@@ -12,7 +12,7 @@ if (!process.env.AWS_GIT_TOKEN) {
 const token = process.env.AWS_GIT_TOKEN;
 
 //url for triggering action
-//const gitBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/github-actions-aws-cdk-deploy.yml/dispatches';
+const gitBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/github-actions-aws-cdk-deploy.yml/dispatches';
 const mockBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/mock-deploy.yml/dispatches';
 
 const app = express();
@@ -94,6 +94,7 @@ app.post('/api/build', async (req, res) => {
   const json = req.body;
   const packageName = json.package;
   const packageParams = json.parameters;
+  const mockBuild = json.mock;
 
   const options = {
     method: 'post',
@@ -106,7 +107,16 @@ app.post('/api/build', async (req, res) => {
       inputs: packageParams
     })
   };
-  const response = await indexFactory.triggerBuild(mockBuildUrl, options);
+
+  let response;
+
+  if(mockBuild === true){
+    response = await indexFactory.triggerBuild(mockBuildUrl, options);
+  }
+   else{
+    response = await indexFactory.triggerBuild(gitBuildUrl, options);
+   }
+   
   if (response.status !== 204) {
     res.status(response.status);
     res.json(`Triggered build action failed - ${packageName}`);
