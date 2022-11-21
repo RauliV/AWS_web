@@ -31,6 +31,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: ./Frontend
+          target: prod
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/frontend:${{ github.head_ref }}, ${{ secrets.DOCKER_USERNAME }}/frontend:latest
                 
