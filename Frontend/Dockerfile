@@ -20,4 +20,4 @@ EXPOSE 5000
 
 ENV HOST=0.0.0.0
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "build"]
