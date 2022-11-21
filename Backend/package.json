@@ -19,12 +19,13 @@
   },
   "scripts": {
     "test": "mocha --exit",
-    "coverage": "npx c8 --all -r=lcov -r=text npm test"
+    "coverage": "npx c8 --all -r=html -r=text npm test"
   },
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "coveralls": "^3.1.1",
     "eslint": "^8.26.0"
   }
 }
