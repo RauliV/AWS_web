@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:16 AS prod
 
 WORKDIR /app
 
@@ -20,4 +20,30 @@ EXPOSE 5000
 
 ENV HOST=0.0.0.0
 
-CMD ["npm", "run", "build"]
+RUN npm run build
+
+CMD ["npm", "run", "start"]
+
+FROM node:16 AS dev
+
+WORKDIR /app
+
+ARG SERVER_CONNECTION
+
+ENV SERVER_CONNECTION $SERVER_CONNECTION
+
+ARG SERVER_PORT
+
+ENV SERVER_PORT $SERVER_PORT
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 5000
+
+ENV HOST=0.0.0.0
+
+CMD ["npm", "run", "dev"]
