@@ -117,3 +117,31 @@ describe('POST /api/status', async function() {
 	});
 });
 
+describe('POST /api/auth', function(){
+	const users = ['Kosti', 'Onni', 'Miikka', 'Rauli', 'Veera', 'Hermanni', 'Linnea'];
+
+	it('Should authenticate successfully', async function() {
+		for(const user of users){
+			const buildOptions = {username : user};
+			const response = await request(app).post('/api/auth').send(buildOptions);
+			expect(response.status).equal(200);
+			expect(response.headers).to.include.keys(['content-type']);
+			expect(response.headers['content-type']).to.include('application/json');
+			expect(response.headers).to.include.keys(['access-control-allow-origin']);
+			expect(response.headers['access-control-allow-origin']).to.include('*');
+			expect(response.body).equal('Data: no-data');
+		}	
+		});
+
+	it('Should respond with 404', async function(){
+		const buildOptions = {username : 'Userwhoisnotauthenticated'};
+		const response = await request(app).post('/api/auth').send(buildOptions);
+		expect(response.status).equal(404);
+		expect(response.headers).to.include.keys(['content-type']);
+		expect(response.headers['content-type']).to.include('application/json');
+		expect(response.headers).to.include.keys(['access-control-allow-origin']);
+		expect(response.headers['access-control-allow-origin']).to.include('*');
+		expect(response.body).equal('Data: no-data');
+	});
+	});
+
