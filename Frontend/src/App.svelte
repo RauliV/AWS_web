@@ -11,7 +11,7 @@
   let availablePackages = [];
 
   let log = [];
-
+  let latestStatus = "";
   let selectedPackage = null;
   let dynamicParams = {};
 
@@ -186,8 +186,10 @@
         lastStatus = "";
         lastStepName = "";
         if (state.conclusion === "success") {
+          latestStatus = "Success";
           logMessage(`Current build status: Success!`, "lime");
         } else {
+          latestStatus = "Failed";
           logMessage(
             `Current build status: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
             "salmon"
@@ -202,6 +204,7 @@
         // Status did not change, not logging.
         return;
       } else if (state.status === "in_progress") {
+        latestStatus = "In progress";
         lastStatus = state.status;
         lastStepName = state.stepName;
         logMessage(
@@ -210,6 +213,7 @@
         );
         return;
       } else {
+        latestStatus = "In progress";
         lastStatus = state.status;
         lastStepName = state.stepName;
         logMessage(`Current build status: ${state.status}`, "turquoise");
@@ -286,7 +290,7 @@
     </div>
 
     <div class="view-column">
-      <h2 for="log">Log</h2>
+      <h2 for="log">Latest status: {latestStatus}</h2>
       <div>
         <ul bind:this={logScrollbar}>
           {#each log as messageObj}
