@@ -11,7 +11,8 @@
   let availablePackages = [];
 
   let log = [];
-  let latestStatus = "";
+  let latestStatus = "-";
+
   let selectedPackage = null;
   let dynamicParams = {};
 
@@ -162,11 +163,13 @@
 
     logMessage("Sent build request to backend", "white");
     if (res.status == 200) {
+      latestStatus = "Started"
       const json = await res.json();
       let result = JSON.stringify(json);
       logMessage("Received response from backend: " + result, "turquoise");
       updating = true;
     } else {
+      latestStatus = "Failed to Start"
       logMessage("Backend reported status: " + res.status, "yellow");
     }
 
@@ -204,7 +207,7 @@
         // Status did not change, not logging.
         return;
       } else if (state.status === "in_progress") {
-        latestStatus = "In progress";
+        latestStatus = "In Progress";
         lastStatus = state.status;
         lastStepName = state.stepName;
         logMessage(
@@ -213,7 +216,7 @@
         );
         return;
       } else {
-        latestStatus = "In progress";
+        latestStatus = "In Progress";
         lastStatus = state.status;
         lastStepName = state.stepName;
         logMessage(`Current build status: ${state.status}`, "turquoise");
