@@ -180,6 +180,9 @@
   }
 
   async function getBuildStatus( buildName ) {
+    if (latestStatus === "Started") {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
     const res = await fetch(path);
