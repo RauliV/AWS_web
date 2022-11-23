@@ -46,7 +46,8 @@
 
   const update = () => {
     if (updating) {
-      getBuildStatus();
+      var buildName = dynamicParams["RESOURCE_NAME"]? dynamicParams["RESOURCE_NAME"] : "Current build status";
+      getBuildStatus( buildName );
     }
   };
 
@@ -182,7 +183,10 @@
     waitingForActionToResolve = false;
   }
 
-  async function getBuildStatus(/*buildId*/) {
+  async function getBuildStatus( buildName ) {
+    if (latestStatus === "Started") {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
     const path = basepath + "/api/status";
     const res = await fetch(path);
     if (res.status == 200) {
@@ -193,11 +197,11 @@
         lastStepName = "";
         if (state.conclusion === "success") {
           latestStatus = "Success";
-          logMessage(`Current build status: Success!`, "lime");
+          logMessage(`${buildName}: Success!`, "lime");
         } else {
           latestStatus = "Failed";
           logMessage(
-            `Current build status: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
+            `${buildName}: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
             "salmon"
           );
           logMessage(`Error: ${state.errorMessage}`, "salmon");
@@ -214,7 +218,7 @@
         lastStatus = state.status;
         lastStepName = state.stepName;
         logMessage(
-          `Current build status: In Progress (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
+          `${buildName}: In Progress (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
           "turquoise"
         );
         return;
@@ -222,7 +226,7 @@
         latestStatus = "In Progress";
         lastStatus = state.status;
         lastStepName = state.stepName;
-        logMessage(`Current build status: ${state.status}`, "turquoise");
+        logMessage(`${buildName}: ${state.status}`, "turquoise");
         return;
       }
     }
@@ -449,7 +453,7 @@
   }
 
   button:hover {
-    background-color: white;
+    background-color: white !important;
     color: black;
   }
 
