@@ -318,10 +318,15 @@
       <h2>Available packages</h2>
       <select size="5" single bind:value={selectedPackage}>
         {#each availablePackages as pkg}
-            {#if noPkg.name == noPkg.name}
-        <option value={pkg} on:click={resetDynamicParams}>
-            {pkg.name}
-        </option>
+            {#if noPkg.name == pkg.name}
+              <option disabled="true">
+                {pkg.name}
+              </option>
+            {:else}
+              <option value={pkg} on:click={resetDynamicParams}>
+                {pkg.name}
+              </option>
+            {/if}
         {/each}
       </select>
       <button id="returnbtn" on:click={returnToMain}> Return </button>
