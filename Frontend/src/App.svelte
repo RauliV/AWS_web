@@ -1,7 +1,8 @@
 <script>
   import { onMount, tick } from "svelte";
+
   let basepath = "";
-  if(1 == 1) {
+  if(!DOCKER_RUN) {
     basepath = "http://localhost:8080";
   } else {
     basepath = SERVER_CONNECTION + "://" + window.location.hostname;

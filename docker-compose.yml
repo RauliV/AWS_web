@@ -14,7 +14,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./Frontend
-      target: dev
+      target: prod
       args:
        - SERVER_CONNECTION=http
     depends_on:
