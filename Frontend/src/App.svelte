@@ -450,7 +450,7 @@
   }
 
   button:hover {
-    background-color: white;
+    background-color: white !important;
     color: black;
   }
 
