@@ -1,6 +1,12 @@
 <script>
   import { onMount, tick } from "svelte";
-
+  let basepath = "";
+  if(1 == 1) {
+    basepath = "http://localhost:8080";
+  } else {
+    basepath = SERVER_CONNECTION + "://" + window.location.hostname;
+  }
+  
   const Views = {
     Login: "Login",
     Main: "Main",
@@ -59,8 +65,7 @@
       password: password,
     };
 
-    const path =
-      SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
+    const path = basepath + "/api/auth";
     const res = fetch(path, {
       method: "POST",
       body: JSON.stringify(loginInfo),
@@ -86,8 +91,7 @@
     waitingForActionToResolve = true;
 
     logMessage("Starting new environment", "white");
-    const path =
-      SERVER_CONNECTION + "://" + window.location.hostname + "/api/list";
+    const path = basepath + "/api/list";
     const response = fetch(path)
       .then((response) => response.json())
       .then((data) => {
@@ -144,8 +148,7 @@
     if (waitingForActionToResolve) return;
     waitingForActionToResolve = true;
 
-    const path =
-      SERVER_CONNECTION + "://" + window.location.hostname + "/api/build";
+    const path = basepath + "/api/build";
 
     let buildOptions = {
       package: selectedPackage.name,
@@ -179,8 +182,7 @@
   }
 
   async function getBuildStatus(/*buildId*/) {
-    const path =
-      SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
+    const path = basepath + "/api/status";
     const res = await fetch(path);
     if (res.status == 200) {
       let state = await res.json();

@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { gitFactory } from './github.js';
 import 'node-fetch';
 import fetch from 'node-fetch';
+import cors from 'cors';
 
 if (!process.env.AWS_GIT_TOKEN) {
   dotenv.config();
@@ -18,6 +19,8 @@ const mockBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Or
 const app = express();
 const port = 8080;
 app.use(express.json());
+
+app.use(cors());
 
 app.get('/', (req, res) => {
   //addLogLine('Sir', 'Good day');
