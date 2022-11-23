@@ -8,7 +8,8 @@
   };
   let currentView = Views.Login;
 
-  let availablePackages = [];
+  const noPkg = {name:"Is loading packages..."};
+  let availablePackages = [noPkg];
 
   let log = [];
   let latestStatus = "-";
@@ -86,6 +87,7 @@
     if (waitingForActionToResolve) return;
     waitingForActionToResolve = true;
 
+    currentView = Views.PackageSelection;
     logMessage("Starting new environment", "white");
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/list";
@@ -96,7 +98,6 @@
         availablePackages = [];
         selectedPackage = null;
         availablePackages = Array.from(data.templates);
-        currentView = Views.PackageSelection;
         waitingForActionToResolve = false;
       })
       .catch((error) => {
@@ -104,13 +105,14 @@
         availablePackages = [];
         selectedPackage = null;
         waitingForActionToResolve = false;
+        currentView = Views.main;
         return [];
       });
   }
 
   function returnToMain() {
     logMessage("Returned to main view from package selection screen", "white");
-    availablePackages = [];
+    availablePackages = [noPkg];
     selectedPackage = null;
     currentView = Views.Main;
 
@@ -316,9 +318,9 @@
       <h2>Available packages</h2>
       <select size="5" single bind:value={selectedPackage}>
         {#each availablePackages as pkg}
-          <option value={pkg} on:click={resetDynamicParams}>
+        <option value={pkg} on:click={resetDynamicParams}>
             {pkg.name}
-          </option>
+        </option>
         {/each}
       </select>
       <button id="returnbtn" on:click={returnToMain}> Return </button>
