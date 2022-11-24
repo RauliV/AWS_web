@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { gitFactory } from './github.js';
 import 'node-fetch';
 import fetch from 'node-fetch';
+import mysql from 'mysql'
 
 if (!process.env.AWS_GIT_TOKEN) {
   dotenv.config();
@@ -15,9 +16,27 @@ const token = process.env.AWS_GIT_TOKEN;
 const gitBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/github-actions-aws-cdk-deploy.yml/dispatches';
 const mockBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/mock-deploy.yml/dispatches';
 
+const db = mysql.createConnection(
+  {
+    user: 'root',
+    host: '127.0.0.1',
+    password: 'example',
+    database: 'build-history',
+    port: 3306
+  }
+);
+
 const app = express();
 const port = 8080;
 app.use(express.json());
+
+app.get('/api/insert', (req, res) => {
+  db.query('INSERT INTO builds (Template, Success) VALUES ("test", 1)', (err, result) => {
+    if(err) {console.log(err)}
+    res.send(result);
+  })
+});
+
 
 app.get('/', (req, res) => {
   //addLogLine('Sir', 'Good day');
