@@ -19,7 +19,7 @@ const mockBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Or
 const db = mysql.createConnection(
   {
     user: 'root',
-    host: '127.0.0.1',
+    host: 'db', // NAME OF DATABASE DOCKER CONTAINER! DEFINED IN docker-compose.yml AS container_name
     password: 'example',
     database: 'build-history',
     port: 3306
@@ -31,7 +31,7 @@ const port = 8080;
 app.use(express.json());
 
 app.get('/api/insert', (req, res) => {
-  db.query('INSERT INTO builds (Template, Success) VALUES ("test", 1)', (err, result) => {
+  db.query('INSERT INTO builds (Template, Success) VALUES ("test", "1")', (err, result) => {
     if(err) {console.log(err)}
     res.send(result);
   })
