@@ -31,23 +31,6 @@ const app = express();
 const port = 8080;
 app.use(express.json());
 
-// for database testing 
-app.get('/api/insert', (req, res) => {
-
-  // store build to database
-  db.query('CREATE TABLE if not exists builds (build_id INT, timestamp TIMESTAMP, template_name VARCHAR(50), build_success BOOL)');
-  
-  let buildId = Math.floor(Math.random() * 10000);
-  let buildSuccess = Math.floor(Math.random() * 2);
-  let values = `("${buildId}", CURRENT_TIMESTAMP, "{packageName}", "${buildSuccess | 0}")`;
-  db.query(`INSERT INTO builds (build_id, timestamp, template_name, build_success) VALUES ${values}`, (err, result) => {
-    if(err) {console.log(err)}
-    res.send(result);
-  });
-
-});
-
-
 app.get('/', (req, res) => {
   //addLogLine('Sir', 'Good day');
   res.send('Good day, Sir!');
