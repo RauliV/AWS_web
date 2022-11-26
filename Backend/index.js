@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { gitFactory } from './github.js';
 import 'node-fetch';
 import fetch from 'node-fetch';
-import mysql from 'mysql'
+import mysql from 'mysql';
 
 if (!process.env.AWS_GIT_TOKEN) {
   dotenv.config();
