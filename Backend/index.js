@@ -4,7 +4,6 @@ import { gitFactory } from './github.js';
 import 'node-fetch';
 import fetch from 'node-fetch';
 import mysql from 'mysql'
-import e from 'express';
 
 if (!process.env.AWS_GIT_TOKEN) {
   dotenv.config();
@@ -56,13 +55,13 @@ app.get('/api/status', async (req, res) => {
   {
     // store build to database
     db.query('CREATE TABLE if not exists builds (build_id INT, timestamp TIMESTAMP, template_name VARCHAR(50), build_success BOOL)');
-    let buildId = Math.floor(Math.random() * 10000);
+    const buildId = Math.floor(Math.random() * 10000);
     let buildSuccess = 1;
     if(state.conclusion === 'failure') {buildSuccess = 0;}
-    let packageName = "template name"
-    let values = `("${buildId}", CURRENT_TIMESTAMP, "${packageName}", "${buildSuccess}")`;
+    const packageName = 'template name';
+    const values = `("${buildId}", CURRENT_TIMESTAMP, "${packageName}", "${buildSuccess}")`;
     db.query(`INSERT INTO builds (build_id, timestamp, template_name, build_success) VALUES ${values}`, (err, result) => {
-      if(err) {console.log(err)}
+      if(err) {console.log(err);}
       res.send(result);
     });
   }
