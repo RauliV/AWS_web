@@ -38,6 +38,20 @@
   // bool for mock build checkbox state
   let mockAction = false;
 
+  // Store previous runs to show in history view
+  // For now just mock runs 
+  let previousRuns = [{runName:'TEMPLATE EC2', status: 'in progress', desc: 'Description 1'},
+                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 2'},
+                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 3'},
+                      {runName:'TEMPLATE EC2', status: 'fail', desc: 'Description 4'},
+                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 5'},
+                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 6'},
+                      {runName:'TEMPLATE EC2', status: 'fail', desc: 'Description 7'},
+                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 8'},
+                      {runName:'TEMPLATE EC2', status: 'fail', desc: 'Description 9'},
+                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 10'},
+                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 11'}];
+
   const update = () => {
     if (updating) {
       var buildName = dynamicParams["RESOURCE_NAME"]? dynamicParams["RESOURCE_NAME"] : "Current build status";
@@ -298,18 +312,12 @@
       </button>
       <h2 id="history-view-header">Previously deployed packages</h2>
       <select size="10" id="history-view-select">
-        <option>Previous run</option>
-        <option>Previous run</option>
-        <option>Previous run</option>
-        <option>Previous run</option>
-        <option>Previous run</option>
-        <option>Previous run</option>
-        <option>Previous run</option>
-        <option>Previous run</option>
-        <option>Previous run</option>
-        <option>Previous run</option>
-        <option>Previous run</option>
-        <option>Previous run</option>
+        {#each previousRuns as run}
+        <option>
+          {run.runName + " Status: " + run.status}
+        </option>
+          
+        {/each}
       </select>
       <div id="history-view-extra">
 
