@@ -296,6 +296,25 @@
       <button id="start-button" on:click={startNewEnvironment}>
         Start new environment
       </button>
+      <h2 id="history-view-header">Previously deployed packages</h2>
+      <select size="10" id="history-view-select">
+        <option>Previous run</option>
+        <option>Previous run</option>
+        <option>Previous run</option>
+        <option>Previous run</option>
+        <option>Previous run</option>
+        <option>Previous run</option>
+        <option>Previous run</option>
+        <option>Previous run</option>
+        <option>Previous run</option>
+        <option>Previous run</option>
+        <option>Previous run</option>
+        <option>Previous run</option>
+      </select>
+      <div id="history-view-extra">
+
+      </div>
+
     </div>
 
     <div class="view-column">
@@ -471,7 +490,8 @@
   #start-button {
     background-color: #2bb368;
     width: 50%;
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 50px;
   }
 
   #start-button:hover {
@@ -503,6 +523,23 @@
 
   #clearlogbtn:hover {
     border-color: #36a8f4;
+  }
+
+  #history-view-header{
+    margin: 20px;
+  }
+
+  #history-view-select{
+    width: 80%;
+    background-color: #383838;
+    color: white;
+  }
+
+  #history-view-extra{
+    margin: 2% auto;
+    width: 80%;
+    background-color: #383838;
+    height: 20%;
   }
 
   .error {
