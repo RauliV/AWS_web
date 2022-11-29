@@ -8,10 +8,12 @@
   };
   let currentView = Views.Login;
 
-  let availablePackages = [];
+  const noPkg = {name:"Is loading packages..."};
+  let availablePackages = [noPkg];
 
   let log = [];
-  let latestStatus = "";
+  let latestStatus = "-";
+
   let selectedPackage = null;
   let dynamicParams = {};
 
@@ -38,7 +40,8 @@
 
   const update = () => {
     if (updating) {
-      getBuildStatus();
+      var buildName = dynamicParams["RESOURCE_NAME"]? dynamicParams["RESOURCE_NAME"] : "Current build status";
+      getBuildStatus( buildName );
     }
   };
 
@@ -84,6 +87,7 @@
     if (waitingForActionToResolve) return;
     waitingForActionToResolve = true;
 
+    currentView = Views.PackageSelection;
     logMessage("Starting new environment", "white");
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/list";
@@ -94,7 +98,6 @@
         availablePackages = [];
         selectedPackage = null;
         availablePackages = Array.from(data.templates);
-        currentView = Views.PackageSelection;
         waitingForActionToResolve = false;
       })
       .catch((error) => {
@@ -102,13 +105,14 @@
         availablePackages = [];
         selectedPackage = null;
         waitingForActionToResolve = false;
+        currentView = Views.main;
         return [];
       });
   }
 
   function returnToMain() {
     logMessage("Returned to main view from package selection screen", "white");
-    availablePackages = [];
+    availablePackages = [noPkg];
     selectedPackage = null;
     currentView = Views.Main;
 
@@ -162,11 +166,13 @@
 
     logMessage("Sent build request to backend", "white");
     if (res.status == 200) {
+      latestStatus = "Started"
       const json = await res.json();
       let result = JSON.stringify(json);
       logMessage("Received response from backend: " + result, "turquoise");
       updating = true;
     } else {
+      latestStatus = "Failed to Start"
       logMessage("Backend reported status: " + res.status, "yellow");
     }
 
@@ -175,7 +181,10 @@
     waitingForActionToResolve = false;
   }
 
-  async function getBuildStatus(/*buildId*/) {
+  async function getBuildStatus( buildName ) {
+    if (latestStatus === "Started") {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
     const res = await fetch(path);
@@ -187,11 +196,11 @@
         lastStepName = "";
         if (state.conclusion === "success") {
           latestStatus = "Success";
-          logMessage(`Current build status: Success!`, "lime");
+          logMessage(`${buildName}: Success!`, "lime");
         } else {
           latestStatus = "Failed";
           logMessage(
-            `Current build status: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
+            `${buildName}: Failed! (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
             "salmon"
           );
           logMessage(`Error: ${state.errorMessage}`, "salmon");
@@ -204,19 +213,19 @@
         // Status did not change, not logging.
         return;
       } else if (state.status === "in_progress") {
-        latestStatus = "In progress";
+        latestStatus = "In Progress";
         lastStatus = state.status;
         lastStepName = state.stepName;
         logMessage(
-          `Current build status: In Progress (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
+          `${buildName}: In Progress (${state.stepNumber}/${state.stepCount}) - ${state.stepName}`,
           "turquoise"
         );
         return;
       } else {
-        latestStatus = "In progress";
+        latestStatus = "In Progress";
         lastStatus = state.status;
         lastStepName = state.stepName;
-        logMessage(`Current build status: ${state.status}`, "turquoise");
+        logMessage(`${buildName}: ${state.status}`, "turquoise");
         return;
       }
     }
@@ -320,9 +329,15 @@
       <h2>Available packages</h2>
       <select size="5" single bind:value={selectedPackage}>
         {#each availablePackages as pkg}
-          <option value={pkg} on:click={resetDynamicParams}>
-            {pkg.name}
-          </option>
+            {#if noPkg.name == pkg.name}
+              <option disabled="true">
+                {pkg.name}
+              </option>
+            {:else}
+              <option value={pkg} on:click={resetDynamicParams}>
+                {pkg.name}
+              </option>
+            {/if}
         {/each}
       </select>
       <button id="returnbtn" on:click={returnToMain}> Return </button>
@@ -456,7 +471,7 @@
   }
 
   button:hover {
-    background-color: white;
+    background-color: white !important;
     color: black;
   }
 
