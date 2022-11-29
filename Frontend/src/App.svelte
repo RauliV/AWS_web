@@ -278,7 +278,18 @@
     <div class="error">Unauthorized</div>
   {/if}
 
-  <button id="login-button" on:click={processLogin}> Login </button>
+	<div class="text-left checkbox-wrapper">
+	  <input type="checkbox" id="terms" class="checkbox">
+		<label class="checkbox-label" for="terms">Remember me</label>
+	</div>
+
+  <button class = "login-button" id="login-button" on:click={processLogin}> Login </button>
+
+	<div class = "buttons-side-by-side">
+		 <button class="forgotpassword-button">Forgot password</button>
+		 <button class="signin-button">Sign in</button>
+  </div>
+
 {/if}
 
 {#if currentView == Views.Main}
@@ -417,6 +428,8 @@
   }
 
   input {
+		border-radius: 25px;
+		padding: 10px 15px;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -447,18 +460,65 @@
     color: black;
   }
 
+	.checkbox-wrapper {
+  	text-align: center;
+  	white-space: nowrap;
+}
+	
+	.checkbox {
+		display: inline;
+		width: auto;
+}
+	
+	.checkbox-label {
+		white-space: normal;
+		display: inline;
+}
+	
   #login-button {
+		border-radius: 25px;
+		padding: 10px 40px;
     color: black;
     display: block;
     margin: auto !important;
   }
-
+	
+	.buttons-side-by-side {
+		text-align: center;
+  	white-space: nowrap;
+		margin-top: 10px;
+		margin-left: -4rem;
+	}
+	
+		.forgotpassword-button {
+		border-radius: 25px;
+		padding: 10px 35px;
+		text-align: center;
+		border: none;
+  	background-color: inherit !important;
+  	cursor: pointer;
+		display: inline;
+		color: white !important;
+	}
+	
+	.signin-button {
+		border-radius: 25px;
+		padding: 10px 35px;
+		text-align: center;
+		border: none;
+  	background-color: inherit !important;
+  	cursor: pointer;
+		display: inline;
+		color: white !important;
+	}
+	
   #start-button {
     background-color: #2bb368;
     width: 50%;
     margin: 20px;
   }
 
+	
   #start-button:hover {
     border-color: #2bb368;
   }
