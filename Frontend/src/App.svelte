@@ -8,7 +8,7 @@
   };
   let currentView = Views.Login;
 
-  const noPkg = {name:"Is loading packages..."};
+  const noPkg = { name: "Is loading packages..." };
   let availablePackages = [noPkg];
 
   let log = [];
@@ -40,8 +40,10 @@
 
   const update = () => {
     if (updating) {
-      var buildName = dynamicParams["RESOURCE_NAME"]? dynamicParams["RESOURCE_NAME"] : "Current build status";
-      getBuildStatus( buildName );
+      var buildName = dynamicParams["RESOURCE_NAME"]
+        ? dynamicParams["RESOURCE_NAME"]
+        : "Current build status";
+      getBuildStatus(buildName);
     }
   };
 
@@ -80,7 +82,6 @@
       }
       waitingForActionToResolve = false;
     });
-
   }
 
   function startNewEnvironment() {
@@ -153,7 +154,7 @@
     let buildOptions = {
       package: selectedPackage.name,
       parameters: dynamicParams,
-      mock: mockAction
+      mock: mockAction,
     };
 
     const res = await fetch(path, {
@@ -166,13 +167,13 @@
 
     logMessage("Sent build request to backend", "white");
     if (res.status == 200) {
-      latestStatus = "Started"
+      latestStatus = "Started";
       const json = await res.json();
       let result = JSON.stringify(json);
       logMessage("Received response from backend: " + result, "turquoise");
       updating = true;
     } else {
-      latestStatus = "Failed to Start"
+      latestStatus = "Failed to Start";
       logMessage("Backend reported status: " + res.status, "yellow");
     }
 
@@ -181,9 +182,9 @@
     waitingForActionToResolve = false;
   }
 
-  async function getBuildStatus( buildName ) {
+  async function getBuildStatus(buildName) {
     if (latestStatus === "Started") {
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
     }
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
@@ -287,18 +288,19 @@
     <div class="error">Unauthorized</div>
   {/if}
 
-	<div class="text-left checkbox-wrapper">
-	  <input type="checkbox" id="terms" class="checkbox">
-		<label class="checkbox-label" for="terms">Remember me</label>
-	</div>
-
-  <button class = "login-button" id="login-button" on:click={processLogin}> Login </button>
-
-	<div class = "buttons-side-by-side">
-		 <button class="forgotpassword-button">Forgot password</button>
-		 <button class="signin-button">Sign in</button>
+  <div class="text-left checkbox-wrapper">
+    <input type="checkbox" id="terms" class="checkbox" />
+    <label class="checkbox-label" for="terms">Remember me</label>
   </div>
 
+  <button class="login-button" id="login-button" on:click={processLogin}>
+    Login
+  </button>
+
+  <div class="buttons-side-by-side">
+    <button class="forgotpassword-button">Forgot password</button>
+    <button class="signin-button">Sign in</button>
+  </div>
 {/if}
 
 {#if currentView == Views.Main}
@@ -329,15 +331,15 @@
       <h2>Available packages</h2>
       <select size="5" single bind:value={selectedPackage}>
         {#each availablePackages as pkg}
-            {#if noPkg.name == pkg.name}
-              <option disabled="true">
-                {pkg.name}
-              </option>
-            {:else}
-              <option value={pkg} on:click={resetDynamicParams}>
-                {pkg.name}
-              </option>
-            {/if}
+          {#if noPkg.name == pkg.name}
+            <option disabled="true">
+              {pkg.name}
+            </option>
+          {:else}
+            <option value={pkg} on:click={resetDynamicParams}>
+              {pkg.name}
+            </option>
+          {/if}
         {/each}
       </select>
       <button id="returnbtn" on:click={returnToMain}> Return </button>
@@ -396,7 +398,7 @@
         {/each}
 
         <label>
-          <input type=checkbox bind:checked={mockAction}>
+          <input type="checkbox" bind:checked={mockAction} />
           Run mock build
         </label>
 
@@ -443,8 +445,8 @@
   }
 
   input {
-		border-radius: 25px;
-		padding: 10px 15px;
+    border-radius: 25px;
+    padding: 10px 15px;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -475,65 +477,64 @@
     color: black;
   }
 
-	.checkbox-wrapper {
-  	text-align: center;
-  	white-space: nowrap;
-}
-	
-	.checkbox {
-		display: inline;
-		width: auto;
-}
-	
-	.checkbox-label {
-		white-space: normal;
-		display: inline;
-}
-	
+  .checkbox-wrapper {
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .checkbox {
+    display: inline;
+    width: auto;
+  }
+
+  .checkbox-label {
+    white-space: normal;
+    display: inline;
+  }
+
   #login-button {
-		border-radius: 25px;
-		padding: 10px 40px;
+    border-radius: 25px;
+    padding: 10px 40px;
     color: black;
     display: block;
     margin: auto !important;
   }
-	
-	.buttons-side-by-side {
-		text-align: center;
-  	white-space: nowrap;
-		margin-top: 10px;
-		margin-left: -4rem;
-	}
-	
-		.forgotpassword-button {
-		border-radius: 25px;
-		padding: 10px 35px;
-		text-align: center;
-		border: none;
-  	background-color: inherit !important;
-  	cursor: pointer;
-		display: inline;
-		color: white !important;
-	}
-	
-	.signin-button {
-		border-radius: 25px;
-		padding: 10px 35px;
-		text-align: center;
-		border: none;
-  	background-color: inherit !important;
-  	cursor: pointer;
-		display: inline;
-		color: white !important;
-	}
-	
+
+  .buttons-side-by-side {
+    text-align: center;
+    white-space: nowrap;
+    margin-top: 10px;
+    margin-left: -4rem;
+  }
+
+  .forgotpassword-button {
+    border-radius: 25px;
+    padding: 10px 35px;
+    text-align: center;
+    border: none;
+    background-color: inherit !important;
+    cursor: pointer;
+    display: inline;
+    color: white !important;
+  }
+
+  .signin-button {
+    border-radius: 25px;
+    padding: 10px 35px;
+    text-align: center;
+    border: none;
+    background-color: inherit !important;
+    cursor: pointer;
+    display: inline;
+    color: white !important;
+  }
+
   #start-button {
     background-color: #2bb368;
     width: 50%;
     margin: 20px;
   }
 
-	
   #start-button:hover {
     border-color: #2bb368;
   }
