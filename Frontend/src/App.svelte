@@ -423,7 +423,6 @@
     display: block;
     margin: auto !important;
   }
-=======
 
   .buttons-side-by-side {
     text-align: center;
