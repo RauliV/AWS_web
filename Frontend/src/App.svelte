@@ -253,7 +253,19 @@
     <div class="error">Unauthorized</div>
   {/if}
 
-  <button id="login-button" on:click={processLogin}> Login </button>
+  <div class="text-left checkbox-wrapper">
+    <input type="checkbox" id="terms" class="checkbox" />
+    <label class="checkbox-label" for="terms">Remember me</label>
+  </div>
+
+  <button class="login-button" id="login-button" on:click={processLogin}>
+    Login
+  </button>
+
+  <div class="buttons-side-by-side">
+    <button class="forgotpassword-button">Forgot password</button>
+    <button class="signin-button">Sign in</button>
+  </div>
 {/if}
 
 {#if currentView == Views.Main}
@@ -393,6 +405,8 @@
   }
   input {
     display: block;
+    border-radius: 25px;
+    padding: 10px 15px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -417,8 +431,10 @@
     background-color: white !important;
     color: black;
   }
-  
+
   #login-button {
+    border-radius: 25px;
+    padding: 10px 40px;
     color: black;
     display: block;
     margin: auto !important;
@@ -514,5 +530,20 @@
   }
   li {
     line-height: 25px;
+  }
+
+  .checkbox-wrapper {
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .checkbox {
+    display: inline;
+    width: auto;
+  }
+
+  .checkbox-label {
+    white-space: normal;
+    display: inline;
   }
 </style>
