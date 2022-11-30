@@ -14,7 +14,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./Frontend
-      target: dev
       args:
        - SERVER_CONNECTION=http
     depends_on:
@@ -28,8 +27,33 @@ services:
       context: ./Backend
     networks:
       - mynetwork
+    depends_on:
+      - db
     environment:
       AWS_GIT_TOKEN: $AWS_GIT_TOKEN
+      
+  db:
+    container_name: db
+    image: mysql
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: build_history
+    ports:
+      - 3306:3306
+    networks:
+      - mynetwork
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:
