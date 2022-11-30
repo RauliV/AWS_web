@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import { gitFactory } from './github.js';
 import 'node-fetch';
 import fetch from 'node-fetch';
-import mysql from 'mysql';
 
 if (!process.env.AWS_GIT_TOKEN) {
   dotenv.config();
@@ -15,16 +14,6 @@ const token = process.env.AWS_GIT_TOKEN;
 //url for triggering action
 const gitBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/github-actions-aws-cdk-deploy.yml/dispatches';
 const mockBuildUrl = 'https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/workflows/mock-deploy.yml/dispatches';
-
-const db = mysql.createConnection(
-  {
-    user: 'root',
-    host: 'db', // NAME OF DATABASE DOCKER CONTAINER DEFINED IN docker-compose.yml AS container_name
-    password: 'example',
-    database : 'build_history',
-    port: 3306
-  }
-);
 
 const app = express();
 const port = 8080;
@@ -51,21 +40,6 @@ async function triggerBuild(buildUrl, options) {
 
 app.get('/api/status', async (req, res) => {
   const state = await getStatus();
-  if(state.status === 'completed')
-  {
-    // store build to database
-    db.query('CREATE TABLE if not exists builds (build_id INT, timestamp TIMESTAMP, template_name VARCHAR(50), build_success BOOL)');
-    const buildId = Math.floor(Math.random() * 10000);
-    let buildSuccess = 1;
-    if(state.conclusion === 'failure') {buildSuccess = 0;}
-    const packageName = 'template name';
-    const values = `("${buildId}", CURRENT_TIMESTAMP, "${packageName}", "${buildSuccess}")`;
-    db.query(`INSERT INTO builds (build_id, timestamp, template_name, build_success) VALUES ${values}`, (err, result) => {
-      if(err) {console.log(err);}
-      res.send(result);
-    });
-  }
-
   res.status(200);
   res.json(state);
 });
@@ -141,14 +115,13 @@ app.post('/api/build', async (req, res) => {
   }
    else{
     response = await indexFactory.triggerBuild(gitBuildUrl, options);
-  }
+   }
    
   if (response.status !== 204) {
     res.status(response.status);
     res.json(`Triggered build action failed - ${packageName}`);
     return;
   }
-
   res.status(200);
   res.json(`Triggered build action successfully - ${packageName}`);
 });
