@@ -61,7 +61,7 @@ app.get('/api/status', async (req, res) => {
     if(state.conclusion === 'failure') {buildSuccess = 0;}
     const packageName = 'template name';
     const values = `("${buildId}", CURRENT_TIMESTAMP, "${packageName}", "${buildSuccess}")`;
-    db.query(`INSERT INTO builds (build_id, timestamp, template_name, build_success) VALUES ${values}`, (err, result) => {});
+    db.query(`INSERT INTO builds (build_id, timestamp, template_name, build_success) VALUES ${values}`);
   }
 
   res.status(200);
