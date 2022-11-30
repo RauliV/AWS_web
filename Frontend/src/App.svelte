@@ -154,6 +154,7 @@
     currentView = Views.Main;
     waitingForActionToResolve = false;
   }
+
   async function getBuildStatus(buildName) {
     if (latestStatus === "Started") {
       await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -416,16 +417,49 @@
     background-color: white !important;
     color: black;
   }
+  
   #login-button {
     color: black;
     display: block;
     margin: auto !important;
   }
+=======
+
+  .buttons-side-by-side {
+    text-align: center;
+    white-space: nowrap;
+    margin-top: 10px;
+    margin-left: -4rem;
+  }
+
+  .forgotpassword-button {
+    border-radius: 25px;
+    padding: 10px 35px;
+    text-align: center;
+    border: none;
+    background-color: inherit !important;
+    cursor: pointer;
+    display: inline;
+    color: white !important;
+  }
+
+  .signin-button {
+    border-radius: 25px;
+    padding: 10px 35px;
+    text-align: center;
+    border: none;
+    background-color: inherit !important;
+    cursor: pointer;
+    display: inline;
+    color: white !important;
+  }
+
   #start-button {
     background-color: #2bb368;
     width: 50%;
     margin: 20px;
   }
+
   #start-button:hover {
     border-color: #2bb368;
   }
