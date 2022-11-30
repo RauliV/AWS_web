@@ -1,43 +1,33 @@
 <script>
   import { onMount, tick } from "svelte";
-
   const Views = {
     Login: "Login",
     Main: "Main",
     PackageSelection: "PackageSelection",
   };
   let currentView = Views.Login;
-
   const noPkg = { name: "Is loading packages..." };
   let availablePackages = [noPkg];
-
   let log = [];
   let latestStatus = "-";
-
   let selectedPackage = null;
   let dynamicParams = {};
-
   // The build parameters.
   let secretkey = null;
   let accesskey = null;
   let region = null;
-
   // Login parameters
   let username = null;
   let password = null;
   let logInFailed = false;
-
   // For updating the build status
   let updating = false;
   let lastStatus = "";
   let lastStepName = "";
-
   // bool to ensure that backend calls aren't performed multiple times
   let waitingForActionToResolve = false;
-
   // bool for mock build checkbox state
   let mockAction = false;
-
   const update = () => {
     if (updating) {
       var buildName = dynamicParams["RESOURCE_NAME"]
@@ -46,23 +36,19 @@
       getBuildStatus(buildName);
     }
   };
-
   let clear;
   $: {
     clearInterval(clear);
     clear = setInterval(update, 5000);
   }
-
   function processLogin() {
     if (waitingForActionToResolve) return;
     waitingForActionToResolve = true;
-
     logInFailed = false;
     let loginInfo = {
       username: username,
       password: password,
     };
-
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
     const res = fetch(path, {
@@ -83,11 +69,9 @@
       waitingForActionToResolve = false;
     });
   }
-
   function startNewEnvironment() {
     if (waitingForActionToResolve) return;
     waitingForActionToResolve = true;
-
     currentView = Views.PackageSelection;
     logMessage("Starting new environment", "white");
     const path =
@@ -110,28 +94,23 @@
         return [];
       });
   }
-
   function returnToMain() {
     logMessage("Returned to main view from package selection screen", "white");
     availablePackages = [noPkg];
     selectedPackage = null;
     currentView = Views.Main;
-
     secretkey = null;
     accesskey = null;
     region = null;
   }
-
   function resetDynamicParams() {
     dynamicParams = {};
     buildRequestValidation = false;
   }
-
   function on_key_down(event) {
     // Assuming you only want to handle the first press, we early
     // return to skip.
     if (event.repeat) return;
-
     switch (event.key) {
       case "Enter":
         if (currentView == Views.Login) {
@@ -143,20 +122,16 @@
         break;
     }
   }
-
   async function sendBuildRequest() {
     if (waitingForActionToResolve) return;
     waitingForActionToResolve = true;
-
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/build";
-
     let buildOptions = {
       package: selectedPackage.name,
       parameters: dynamicParams,
       mock: mockAction,
     };
-
     const res = await fetch(path, {
       method: "POST",
       body: JSON.stringify(buildOptions),
@@ -164,7 +139,6 @@
         "Content-Type": "application/json",
       },
     });
-
     logMessage("Sent build request to backend", "white");
     if (res.status == 200) {
       latestStatus = "Started";
@@ -176,7 +150,6 @@
       latestStatus = "Failed to Start";
       logMessage("Backend reported status: " + res.status, "yellow");
     }
-
     selectedPackage = null;
     currentView = Views.Main;
     waitingForActionToResolve = false;
@@ -231,39 +204,32 @@
       }
     }
   }
-
   async function logMessage(message, color = "white") {
     message =
       new Date(Date.now()).toISOString().substring(0, 23) +
       " - " +
       message +
       "\n";
-
     // format color string for style
     if (color.substring(0, 6) != "color:") {
       color = "color:" + color;
     }
-
     let messageObj = {
       message: message,
       style: color,
     };
     log.push(messageObj);
-
     if (log.length > 200) {
       log.splice(0, 1);
     }
-
     log = log;
     await tick();
     scrollToBottom(logScrollbar);
   }
-
   function clearLog() {
     log = [];
     logMessage("Cleared log", "white");
   }
-
   const scrollToBottom = async (node) => {
     if (node != undefined) {
       node.scroll({ top: node.scrollHeight, behavior: "smooth" });
@@ -271,7 +237,6 @@
   };
   let logScrollbar;
   onMount(() => scrollToBottom(logScrollbar));
-
   let buildRequestValidation = false;
   logMessage("Initialized frontend", "white");
 </script>
@@ -288,19 +253,7 @@
     <div class="error">Unauthorized</div>
   {/if}
 
-  <div class="text-left checkbox-wrapper">
-    <input type="checkbox" id="terms" class="checkbox" />
-    <label class="checkbox-label" for="terms">Remember me</label>
-  </div>
-
-  <button class="login-button" id="login-button" on:click={processLogin}>
-    Login
-  </button>
-
-  <div class="buttons-side-by-side">
-    <button class="forgotpassword-button">Forgot password</button>
-    <button class="signin-button">Sign in</button>
-  </div>
+  <button id="login-button" on:click={processLogin}> Login </button>
 {/if}
 
 {#if currentView == Views.Main}
@@ -417,53 +370,42 @@
     background-color: #2b2b2b;
     color: #d6d6d6;
   }
-
   h1,
   h2 {
     text-align: center;
   }
-
   select {
     display: block;
     margin: 0 auto;
   }
-
   .column-container {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     height: 40vh;
   }
-
   .view-column {
     flex: 1;
     position: relative;
   }
-
   .view-column p {
     text-align: center;
   }
-
   input {
-    border-radius: 25px;
-    padding: 10px 15px;
     display: block;
     margin-left: auto;
     margin-right: auto;
   }
-
   .dynamic-param {
     width: 50%;
     display: block;
     margin: 0 auto;
   }
-
   label {
     margin-top: 5%;
     margin-bottom: 2%;
     text-align: center;
   }
-
   button {
     padding: 10px 50px 10px 50px;
     color: white;
@@ -471,30 +413,12 @@
     margin: 0 auto;
     transition-duration: 0.4s;
   }
-
   button:hover {
     background-color: white !important;
     color: black;
   }
-
-  .checkbox-wrapper {
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  .checkbox {
-    display: inline;
-    width: auto;
-  }
-
-  .checkbox-label {
-    white-space: normal;
-    display: inline;
-  }
-
+  
   #login-button {
-    border-radius: 25px;
-    padding: 10px 40px;
     color: black;
     display: block;
     margin: auto !important;
@@ -538,34 +462,27 @@
   #start-button:hover {
     border-color: #2bb368;
   }
-
   #buildbtn {
     background-color: #008cba;
     margin-top: 16%;
   }
-
   #buildbtn:hover {
     border-color: #008cba;
   }
-
   #returnbtn {
     background-color: #f44336;
     margin-top: 20%;
   }
-
   #returnbtn:hover {
     border-color: #f44336;
   }
-
   #clearlogbtn {
     background-color: #36a8f4;
     margin-top: 20%;
   }
-
   #clearlogbtn:hover {
     border-color: #36a8f4;
   }
-
   .error {
     display: block;
     margin-left: auto;
@@ -573,23 +490,18 @@
     color: #f00;
     text-align: center;
   }
-
   .buildRequestValidation input:invalid {
     border: 2px solid #c00;
   }
-
   .buildRequestValidation input:focus:invalid {
     outline: 2px solid #c00;
   }
-
   .buildRequestValidation select:invalid {
     border: 2px solid #c00;
   }
-
   .buildRequestValidation select:focus:invalid {
     outline: 2px solid #c00;
   }
-
   ul {
     list-style: none;
     max-height: 400px;
@@ -600,7 +512,6 @@
     text-indent: 10px;
     background-color: #383838;
   }
-
   li {
     line-height: 25px;
   }
