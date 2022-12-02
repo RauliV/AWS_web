@@ -12,6 +12,7 @@
   let latestStatus = "-";
   let selectedPackage = null;
   let dynamicParams = {};
+  let packageName = "";
   // The build parameters.
   let secretkey = null;
   let accesskey = null;
@@ -146,6 +147,7 @@
       let result = JSON.stringify(json);
       logMessage("Received response from backend: " + result, "turquoise");
       updating = true;
+      packageName = selectedPackage.name;
     } else {
       latestStatus = "Failed to Start";
       logMessage("Backend reported status: " + res.status, "yellow");
@@ -161,7 +163,20 @@
     }
     const path =
       SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
-    const res = await fetch(path);
+    
+    const body = {
+        name: buildName,
+        package: packageName
+      }
+    
+    const res = await fetch(path, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
     if (res.status == 200) {
       let state = await res.json();
       if (state.status === "completed") {
