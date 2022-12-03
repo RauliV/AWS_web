@@ -52,7 +52,10 @@ async function triggerBuild(buildUrl, options) {
 app.post('/api/history', (req, res) => {
   const buildId = req.body.buildId;
   db.query(`SELECT * FROM BUILDS WHERE build_id = ${buildId}`, function (err, result, fields) {
-    if (err) throw err; 
+    if (err) {
+      console.log(fields);
+      throw err;
+    } 
     res.status(200);
     res.json(result);
   });
