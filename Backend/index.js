@@ -48,20 +48,50 @@ async function triggerBuild(buildUrl, options) {
   return response;
 }
 
+//For single row query to get additional information
+app.post('/api/history', (req, res) => {
+  const buildId = req.body.buildId;
+/*eslint-disable no-unused-vars*/
+  db.query(`SELECT * FROM BUILDS WHERE build_id = ${buildId}`, function (err, result, fields) {
+/*eslint-enable*/   
+    if (err) {
+      throw err;
+    } 
+    res.status(200);
+    res.json(result);
+  });
+});
 
-app.get('/api/status', async (req, res) => {
+
+//Returns wholde table. Could be narrowed down to needed.
+app.get('/api/history', (req, res) => {
+/*eslint-disable no-unused-vars*/
+  db.query('SELECT * FROM BUILDS', function (err, result, fields) {
+/*eslint-enable*/
+  if (err) {
+    throw err;
+  } 
+  res.status(200);
+  res.json(result);
+  });
+});
+
+
+app.post('/api/status', async (req, res) => {
   const state = await getStatus();
 
   if(state.status === 'completed')
   {
     // store build to database
-    db.query('CREATE TABLE if not exists builds (build_id INT, timestamp TIMESTAMP, template_name VARCHAR(50), build_success BOOL)');
-    const buildId = Math.floor(Math.random() * 10000);
+    db.query('CREATE TABLE IF NOT EXISTS BUILDS (build_id BIGINT NOT NULL, timestamp TIMESTAMP, template_name VARCHAR(50), instance_name VARCHAR(50), build_success BOOL, error_message VARCHAR(50), PRIMARY KEY(build_id))');
+    const buildId = state.buildId;
+    const errorMessage = state.errorMessage;
+    const instanceName = req.body.name; //getting info from front
+    const packageName = req.body.package;
     let buildSuccess = 1;
     if(state.conclusion === 'failure') {buildSuccess = 0;}
-    const packageName = 'template name';
-    const values = `("${buildId}", CURRENT_TIMESTAMP, "${packageName}", "${buildSuccess}")`;
-    db.query(`INSERT INTO builds (build_id, timestamp, template_name, build_success) VALUES ${values}`);
+    const values = `("${buildId}", CURRENT_TIMESTAMP, "${packageName}", "${instanceName}", "${buildSuccess}", "${errorMessage}")`;
+    db.query(`INSERT INTO BUILDS(build_id, timestamp, template_name, instance_name, build_success, error_message) VALUES ${values}`);
   }
 
   res.status(200);
@@ -75,10 +105,7 @@ async function getStatus(){
   const timeStamp = new Date().toISOString().substring(0, 10);
   const queryString = `?created=${timeStamp}`;
   const getWorkFlowsUrl = `https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/runs${queryString}`;
-
-
   const workflowRunHeaders = {'Accept' : 'application/vnd.github+json', 'Authorization' : `Bearer ${ token}`};//,
-  
   const workflowRuns = await fetch(getWorkFlowsUrl, {headers: workflowRunHeaders});
   const jsonData = await workflowRuns.json();
   const jobs_url = jsonData.workflow_runs[0].jobs_url;
@@ -98,8 +125,14 @@ async function getStatus(){
         const checkRunJson = await checkRunData.json();
         const annotationsUrl = checkRunJson.output.annotations_url;
         const annotationsData = await fetch(annotationsUrl, {headers: workflowRunHeaders});
-        const annotationsJson = await annotationsData.json();
-        errorMessage = `${annotationsJson[0].message} / line: ${annotationsJson[0].start_line}`;
+
+        // Testing if annotiations is already available to avoid occational crash
+        try {
+          const annotationsJson = await annotationsData.json();
+          errorMessage = `${annotationsJson[0].message} / line: ${annotationsJson[0].start_line}`;
+        } catch (e) {
+          errorMessage = 'Error message not found ';
+        }
       }
     }
   }
@@ -110,6 +143,7 @@ async function getStatus(){
     stepNumber: stepNumber,
     stepCount: stepCount,
     errorMessage: errorMessage,
+    buildId: jobsData.jobs[0].run_id
   };
   return returnObject;
 }
@@ -181,5 +215,6 @@ app.listen(port, () => {
 export default app;
 
 export const indexFactory = {
-  triggerBuild
+  triggerBuild,
+  getStatus
 };
