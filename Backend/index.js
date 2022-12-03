@@ -81,7 +81,6 @@ app.post('/api/status', async (req, res) => {
   if(state.status === 'completed')
   {
     // store build to database
-    //db.query('CREATE TABLE IF NOT EXISTS BUILDS (build_id INT, timestamp TIMESTAMP, template_name VARCHAR(50), build_success BOOL)');
     db.query('CREATE TABLE IF NOT EXISTS BUILDS (build_id BIGINT NOT NULL, timestamp TIMESTAMP, template_name VARCHAR(50), instance_name VARCHAR(50), build_success BOOL, error_message VARCHAR(50), PRIMARY KEY(build_id))');
     const buildId = state.buildId;
     const errorMessage = state.errorMessage;
@@ -124,14 +123,13 @@ async function getStatus(){
         const checkRunJson = await checkRunData.json();
         const annotationsUrl = checkRunJson.output.annotations_url;
         const annotationsData = await fetch(annotationsUrl, {headers: workflowRunHeaders});
-        let annotationsJson = '';
-        while (annotationsJson === '' ){
-          try {
-            annotationsJson = await annotationsData.json();
-            errorMessage = `${annotationsJson[0].message} / line: ${annotationsJson[0].start_line}`;
-          } catch (e) {
-            annotationsJson = '';
-          }
+
+        // Testing if annotiations is already available to avoid occational crash
+        try {
+          const annotationsJson = await annotationsData.json();
+          errorMessage = `${annotationsJson[0].message} / line: ${annotationsJson[0].start_line}`;
+        } catch (e) {
+          errorMessage = 'Error message not found ';
         }
       }
     }
@@ -182,9 +180,6 @@ app.post('/api/build', async (req, res) => {
   }
   res.status(200);
   res.json(`Triggered build action successfully - ${packageName}`);
-
-
-
 });
 
 app.post('/api/auth', async (req, res) => {
