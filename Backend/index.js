@@ -218,5 +218,6 @@ app.listen(port, () => {
 export default app;
 
 export const indexFactory = {
-  triggerBuild
+  triggerBuild,
+  getStatus
 };
