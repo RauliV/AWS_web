@@ -62,7 +62,10 @@ app.post('/api/history', (req, res) => {
 //Returns wholde table. Could be narrowed down to needed.
 app.get('/api/history', (req, res) => {
   db.query('SELECT * FROM BUILDS', function (err, result, fields) {
-  if (err) throw err;
+  if (err) {
+    console.log(fields);
+    throw err;
+  } 
   res.status(200);
   res.json(result);
   });
@@ -118,14 +121,13 @@ async function getStatus(){
         const checkRunJson = await checkRunData.json();
         const annotationsUrl = checkRunJson.output.annotations_url;
         const annotationsData = await fetch(annotationsUrl, {headers: workflowRunHeaders});
-        let annotationsJson = "";
-        while (annotationsJson === "" ){
+        let annotationsJson = '';
+        while (annotationsJson === '' ){
           try {
             annotationsJson = await annotationsData.json();
             errorMessage = `${annotationsJson[0].message} / line: ${annotationsJson[0].start_line}`;
           } catch (e) {
-            annotationsJson = "";
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            annotationsJson = '';
           }
         }
       }
