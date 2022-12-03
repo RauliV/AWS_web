@@ -51,9 +51,10 @@ async function triggerBuild(buildUrl, options) {
 //For single row query to get additional information
 app.post('/api/history', (req, res) => {
   const buildId = req.body.buildId;
+/*eslint-disable no-unused-vars*/
   db.query(`SELECT * FROM BUILDS WHERE build_id = ${buildId}`, function (err, result, fields) {
+/*eslint-enable*/   
     if (err) {
-      console.log(fields);
       throw err;
     } 
     res.status(200);
@@ -64,9 +65,10 @@ app.post('/api/history', (req, res) => {
 
 //Returns wholde table. Could be narrowed down to needed.
 app.get('/api/history', (req, res) => {
+/*eslint-disable no-unused-vars*/
   db.query('SELECT * FROM BUILDS', function (err, result, fields) {
+/*eslint-enable*/
   if (err) {
-    console.log(fields);
     throw err;
   } 
   res.status(200);
