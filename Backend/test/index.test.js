@@ -7,6 +7,8 @@ import assert from 'assert';
 import app from '../index.js';
 import { indexFactory } from '../index.js';
 import { gitFactory } from '../github.js';
+//import mysql from 'mysql';
+
 
 const expect = chai.expect;
 
@@ -30,7 +32,6 @@ describe('GET /api/list', function() {
 		const response = await request(app).get('/api/list');
 		assert(templatesStub.calledOnce);
 		expect(response.type).equal('application/json');
-		console.log(response.body.templates);
 		expect(response.body.templates).deep.equal(['TEMPLATE-1', 'TEMPLATE-2']);
 		expect(response.status).equal(200);
 	});
@@ -87,8 +88,70 @@ describe('POST /api/build', async function() {
 	}
 });
 
+//Troubles resolving db -url. Error: Port 8080 already open. (db in port 3306 though)
+/*describe('POST /api/history', async function(){
 
-describe('POST /api/status', async function() {
+	this.timeout(5000);
+	beforeEach(() => {
+        sandbox.restore();
+    });
+	console.log('okokokok');
+
+	const db = mysql.createConnection(
+		{
+		  user: 'root',
+		  host: 'db', // NAME OF DATABASE DOCKER CONTAINER DEFINED IN docker-compose.yml AS container_name
+		  password: 'example',
+		  database : 'build_history',
+		  port: 3306
+		}
+	  );
+	db.query('CREATE TABLE IF NOT EXISTS BUILDS (build_id BIGINT NOT NULL, timestamp TIMESTAMP, template_name VARCHAR(50), instance_name VARCHAR(50), build_success BOOL, error_message VARCHAR(50), PRIMARY KEY(build_id))');
+	const values = `("1234567890", CURRENT_TIMESTAMP, "Test_package1", "Instance_name1, "1", "Error_message1")`;
+    db.query(`INSERT INTO BUILDS(build_id, timestamp, template_name, instance_name, build_success, error_message) VALUES ${values}`);
+	const values2 = `("0987654321", CURRENT_TIMESTAMP, "Test_package2", "Instance_name2", "1", "Error_message2")`;
+    db.query(`INSERT INTO BUILDS(build_id, timestamp, template_name, instance_name, build_success, error_message) VALUES ${values2}`);
+
+	it('Database table row query performed successfully', async function() {
+		const response = await request(app).post('/api/history').send({buildId: "0987654321"});
+		expect(response.body.packageName.equal("Test_package1"));
+	});
+
+	it('Wrong build it replied accordingly', async function() {
+		
+		db.query('DELETE FROM BUILD WHERE build_id = 0987654321');
+		const response = await request(app).post('/api/history').send({buildId: "0987654321"});
+		expect(response.body).equal('Data: no-data');
+
+});
+
+});
+
+describe ('GET /api/history', function(){
+
+});
+*/
+describe ('getStatus function', async function(){
+	this.timeout(5000);
+	beforeEach(() => {
+        sandbox.restore();
+    });
+
+
+	it('getStatus has a valid response', async function() {
+		const response = await indexFactory.getStatus();
+		expect(response.status).equal('completed');
+		expect(response.conclusion).to.be.oneOf(['failure', 'success']);
+		if (response.conclusion === 'failure'){
+			expect(response.errorMessage).not.equal('');
+		} else {
+			expect(response.errorMessage).equal('');
+		}
+	});
+});
+
+
+describe('POST /api/status (build started status from /api/build??)', async function() {
 	this.timeout(5000);
 	beforeEach(() => {
         sandbox.restore();
