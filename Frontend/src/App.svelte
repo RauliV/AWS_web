@@ -176,7 +176,8 @@
     
     const body = {
         name: buildName,
-        package: packageName
+        package: packageName,
+        localrun: !DOCKER
       }
     
     const res = await fetch(path, {
