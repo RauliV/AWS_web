@@ -2,7 +2,13 @@
   import { onMount, tick } from "svelte";
 
   let basepath = "";
-  if(!DOCKER_RUN) {
+  let DOCKER;
+  if(typeof DOCKER_RUN === 'undefined') {
+    DOCKER = false;
+  } else {
+    DOCKER = DOCKER_RUN;
+  }
+  if(!DOCKER) {
     basepath = "http://localhost:8080";
   } else {
     basepath = SERVER_CONNECTION + "://" + window.location.hostname;
