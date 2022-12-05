@@ -9,6 +9,10 @@ import { indexFactory } from '../index.js';
 import { gitFactory } from '../github.js';
 //import mysql from 'mysql';
 
+function sleep(ms) {
+    // eslint-disable-next-line no-promise-executor-return
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 const expect = chai.expect;
 
@@ -132,16 +136,36 @@ describe ('GET /api/history', function(){
 });
 */
 describe ('getStatus function', async function(){
-	this.timeout(5000);
+	this.timeout(10000);
 	beforeEach(() => {
         sandbox.restore();
     });
 
 
 	it('getStatus has a valid response', async function() {
+		// Do a new mock build
+		const buildOptions = {
+			package: 'TEMPLATE-EC2',
+			parameters: {
+				RESOURCE_NAME: 'BUILD TRIGGERED BY TEST',
+				AWS_REGION: 'eu-west-1',
+				AWS_ACCESS_KEY_ID: '123456789012345678901234567890',
+				AWS_SECRET_ACCESS_KEY: '123456789012345678901234567890'
+			},
+			mock: true,
+		};
+		const buildResponse = await request(app).post('/api/build').send(buildOptions);
+		expect(buildResponse.status).equal(200);
+
+		//Wait fo it to initialize
+		console.log('Initializing: sleeping for 4s..');
+		await sleep(4000);
+
 		const response = await indexFactory.getStatus();
-		expect(response.status).equal('completed');
-		expect(response.conclusion).to.be.oneOf(['failure', 'success']);
+		expect(response.status).to.be.oneOf(['completed', 'queued', 'in_progress']);
+		expect(response.stepNumber).to.be.a('number');
+		expect(response.stepCount).to.be.a('number');
+		expect(response.buildId).to.be.a('number');
 		if (response.conclusion === 'failure'){
 			expect(response.errorMessage).not.equal('');
 		} else {
