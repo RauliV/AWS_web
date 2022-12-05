@@ -13,6 +13,8 @@ if (process.env.SERVER_CONNECTION) {
 	server_connection = JSON.stringify('http');
 }
 
+const docker_run = !process.env.LOCAL_RUN;
+
 function serve() {
 	let server;
 
@@ -78,6 +80,7 @@ export default {
 		replace({
 			preventAssignment: true,
 			SERVER_CONNECTION: server_connection,
+			DOCKER_RUN: docker_run
 		})
 	],
 	watch: {
