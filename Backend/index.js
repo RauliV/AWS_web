@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { gitFactory } from './github.js';
 import 'node-fetch';
 import fetch from 'node-fetch';
+import cors from 'cors';
 import mysql from 'mysql';
 
 if (!process.env.AWS_GIT_TOKEN) {
@@ -29,6 +30,8 @@ const db = mysql.createConnection(
 const app = express();
 const port = 8080;
 app.use(express.json());
+
+app.use(cors());
 
 app.get('/', (req, res) => {
   //addLogLine('Sir', 'Good day');
@@ -80,7 +83,7 @@ app.get('/api/history', (req, res) => {
 app.post('/api/status', async (req, res) => {
   const state = await getStatus();
 
-  if(state.status === 'completed')
+  if(state.status === 'completed' && !req.body.localrun)
   {
     // store build to database
     db.query('CREATE TABLE IF NOT EXISTS BUILDS (build_id BIGINT NOT NULL, timestamp TIMESTAMP, template_name VARCHAR(50), instance_name VARCHAR(50), build_success BOOL, error_message VARCHAR(50), PRIMARY KEY(build_id))');

@@ -20,3 +20,10 @@ Backend is left open, for now.
 
 Frontend can be reached in: http://localhost
 Backend can be reached in: http://localhost/api
+
+# Local development run
+```
+bash startup.sh
+```
+
+localhost:5000 has now the frontend available.

@@ -1,5 +1,19 @@
 <script>
   import { onMount, tick } from "svelte";
+
+  let basepath = "";
+  let DOCKER;
+  if(typeof DOCKER_RUN === 'undefined') {
+    DOCKER = false;
+  } else {
+    DOCKER = DOCKER_RUN;
+  }
+  if(!DOCKER) {
+    basepath = "http://localhost:8080";
+  } else {
+    basepath = SERVER_CONNECTION + "://" + window.location.hostname;
+  }
+
   const Views = {
     Login: "Login",
     Main: "Main",
@@ -50,8 +64,7 @@
       username: username,
       password: password,
     };
-    const path =
-      SERVER_CONNECTION + "://" + window.location.hostname + "/api/auth";
+    const path = basepath + "/api/auth";
     const res = fetch(path, {
       method: "POST",
       body: JSON.stringify(loginInfo),
@@ -75,8 +88,7 @@
     waitingForActionToResolve = true;
     currentView = Views.PackageSelection;
     logMessage("Starting new environment", "white");
-    const path =
-      SERVER_CONNECTION + "://" + window.location.hostname + "/api/list";
+    const path = basepath + "/api/list";
     const response = fetch(path)
       .then((response) => response.json())
       .then((data) => {
@@ -126,8 +138,7 @@
   async function sendBuildRequest() {
     if (waitingForActionToResolve) return;
     waitingForActionToResolve = true;
-    const path =
-      SERVER_CONNECTION + "://" + window.location.hostname + "/api/build";
+    const path = basepath + "/api/build";
     let buildOptions = {
       package: selectedPackage.name,
       parameters: dynamicParams,
@@ -161,12 +172,12 @@
     if (latestStatus === "Started") {
       await new Promise((resolve) => setTimeout(resolve, 3000));
     }
-    const path =
-      SERVER_CONNECTION + "://" + window.location.hostname + "/api/status";
+    const path = basepath + "/api/status";
     
     const body = {
         name: buildName,
-        package: packageName
+        package: packageName,
+        localrun: !DOCKER
       }
     
     const res = await fetch(path, {
