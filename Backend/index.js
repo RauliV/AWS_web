@@ -31,7 +31,7 @@ const app = express();
 const port = 8080;
 app.use(express.json());
 
-app.use(cors());
+//app.use(cors());
 
 app.get('/', (req, res) => {
   //addLogLine('Sir', 'Good day');
@@ -58,7 +58,8 @@ app.post('/api/history', (req, res) => {
   db.query(`SELECT * FROM BUILDS WHERE build_id = ${buildId}`, function (err, result, fields) {
 /*eslint-enable*/   
     if (err) {
-      throw err;
+      res.status(204);
+      res.send();
     } 
     res.status(200);
     res.json(result);
@@ -72,8 +73,9 @@ app.get('/api/history', (req, res) => {
   db.query('SELECT * FROM BUILDS', function (err, result, fields) {
 /*eslint-enable*/
   if (err) {
-    throw err;
-  } 
+    res.status(204);
+    return;
+  }
   res.status(200);
   res.json(result);
   });

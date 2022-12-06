@@ -1,5 +1,6 @@
 <script>
   import { onMount, tick } from "svelte";
+  import { run } from "svelte/internal";
 
   let basepath = "";
   let DOCKER;
@@ -45,18 +46,8 @@
   let mockAction = false;
 
   // Store previous runs to show in history view
-  // For now just mock runs 
-  let previousRuns = [{runName:'TEMPLATE EC2', status: 'in progress', desc: 'Description 1'},
-                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 2'},
-                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 3'},
-                      {runName:'TEMPLATE EC2', status: 'fail', desc: 'Description 4'},
-                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 5'},
-                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 6'},
-                      {runName:'TEMPLATE EC2', status: 'fail', desc: 'Description 7'},
-                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 8'},
-                      {runName:'TEMPLATE EC2', status: 'fail', desc: 'Description 9'},
-                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 10'},
-                      {runName:'TEMPLATE EC2', status: 'complete', desc: 'Description 11'}];
+  let historyRuns = [];
+  let selectedHistoryRun = "";
 
   const update = () => {
     if (updating) {
@@ -181,6 +172,31 @@
     selectedPackage = null;
     currentView = Views.Main;
     waitingForActionToResolve = false;
+  }
+
+
+  onMount(async () =>{
+    let path = basepath + "/api/history";
+    console.log(path);
+    let response = await fetch(path);
+    if(response.status === 200){  
+      let json = await response.json();
+      historyRuns = json;
+      //json.forEach(e => console.log(e));
+      //json.forEach(e => e.toString = function toStr(){return `${this.instance_name}`});
+      //json.forEach(e => console.log(e.instance_name));
+  }});
+
+  const onHistorySelectChange = () => {
+    let buildId = selectedHistoryRun.trim().substring(3,14);
+    historyRuns.forEach(r => {
+      console.log(r.buildId);
+      console.log(buildId);
+      if(String.toString(r.buildId) === buildId){
+        console.log(r.timestamp);
+      }
+    })
+    
   }
 
   async function getBuildStatus(buildName) {
@@ -316,12 +332,11 @@
         Start new environment
       </button>
       <h2 id="history-view-header">Previously deployed packages</h2>
-      <select size="10" id="history-view-select">
-        {#each previousRuns as run}
+      <select size="10" id="history-view-select" bind:value = {selectedHistoryRun} on:change={onHistorySelectChange}>
+        {#each historyRuns as run}       
         <option>
-          {run.runName + " Status: " + run.status}
-        </option>
-          
+          {`Id: ${run.build_id} ---- Template: ${run.template_name} ---- Success: ${run.build_success}`};
+        </option>        
         {/each}
       </select>
       <div id="history-view-extra">
