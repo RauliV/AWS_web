@@ -5,6 +5,7 @@ import 'node-fetch';
 import fetch from 'node-fetch';
 import cors from 'cors';
 import mysql from 'mysql';
+import { noDbResponses } from './test/responses/noDbResponse.js';
 
 if (!process.env.AWS_GIT_TOKEN) {
   dotenv.config();
@@ -54,29 +55,39 @@ async function triggerBuild(buildUrl, options) {
 //For single row query to get additional information
 app.post('/api/history', (req, res) => {
   const buildId = req.body.buildId;
-/*eslint-disable no-unused-vars*/
-  db.query(`SELECT * FROM BUILDS WHERE build_id = ${buildId}`, function (err, result, fields) {
-/*eslint-enable*/   
-    if (err) {
-      throw err;
-    } 
+  if (!req.body.localrun) {
+    /*eslint-disable no-unused-vars*/
+    db.query(`SELECT * FROM BUILDS WHERE build_id = ${buildId}`, function (err, result, fields) {
+    /*eslint-enable*/   
+      if (err) {
+        throw err;
+      } 
+      res.status(200);
+      res.json(result);
+    });
+  } else {
     res.status(200);
-    res.json(result);
-  });
+    res.json(noDbResponses.noDbResponse[0]);
+  }
 });
 
 
-//Returns wholde table. Could be narrowed down to needed.
+//Returns whole table. Could be narrowed down to needed.
 app.get('/api/history', (req, res) => {
-/*eslint-disable no-unused-vars*/
+  if (!req.body.localrun) {
+    /*eslint-disable no-unused-vars*/
   db.query('SELECT * FROM BUILDS', function (err, result, fields) {
-/*eslint-enable*/
-  if (err) {
-    throw err;
-  } 
-  res.status(200);
-  res.json(result);
-  });
+    /*eslint-enable*/
+      if (err) {
+        throw err;
+      } 
+      res.status(200);
+      res.json(result);
+      });
+  } else {
+    res.status(200);
+    res.json(noDbResponses.noDbResponse);
+  }
 });
 
 
@@ -101,6 +112,11 @@ app.post('/api/status', async (req, res) => {
   res.json(state);
 });
 
+async function fetchFunc(url, options){
+  const response = await fetch(url, options);
+  return response;
+}
+
 // NOTE: I would call this in the api/status query coming from front instead of api/built query.
 // build query gets to return and status query is waiting for next new state. 
 async function getStatus(){
@@ -109,10 +125,10 @@ async function getStatus(){
   const queryString = `?created=${timeStamp}`;
   const getWorkFlowsUrl = `https://api.github.com/repos/PROJ-A2022-G06-AWS-2-Cloud-Organization/PROJ-A2022-G06-AWS-2-Cloud/actions/runs${queryString}`;
   const workflowRunHeaders = {'Accept' : 'application/vnd.github+json', 'Authorization' : `Bearer ${ token}`};//,
-  const workflowRuns = await fetch(getWorkFlowsUrl, {headers: workflowRunHeaders});
+  const workflowRuns = await indexFactory.fetchFunc(getWorkFlowsUrl, {headers: workflowRunHeaders});
   const jsonData = await workflowRuns.json();
   const jobs_url = jsonData.workflow_runs[0].jobs_url;
-  const jobs = await fetch(jobs_url, {headers: workflowRunHeaders});
+  const jobs = await indexFactory.fetchFunc(jobs_url, {headers: workflowRunHeaders});
   const jobsData = await jobs.json();
   let stepInProgress = '';
   let stepNumber = 0;
@@ -129,7 +145,7 @@ async function getStatus(){
         const annotationsUrl = checkRunJson.output.annotations_url;
         const annotationsData = await fetch(annotationsUrl, {headers: workflowRunHeaders});
 
-        // Testing if annotiations is already available to avoid occational crash
+        // Testing if annotations is already available to avoid occasional crash
         try {
           const annotationsJson = await annotationsData.json();
           errorMessage = `${annotationsJson[0].message} / line: ${annotationsJson[0].start_line}`;
@@ -219,5 +235,6 @@ export default app;
 
 export const indexFactory = {
   triggerBuild,
-  getStatus
+  getStatus,
+  fetchFunc
 };
