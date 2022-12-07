@@ -177,23 +177,25 @@
 
   onMount(async () =>{
     let path = basepath + "/api/history";
-    console.log(path);
     let response = await fetch(path);
     if(response.status === 200){  
       let json = await response.json();
       historyRuns = json;
-      //json.forEach(e => console.log(e));
-      //json.forEach(e => e.toString = function toStr(){return `${this.instance_name}`});
-      //json.forEach(e => console.log(e.instance_name));
+      
   }});
 
   const onHistorySelectChange = () => {
+    let extraInfo = document.getElementById('history-view-extra');
+    extraInfo.innerHTML = ''; //clear previous content
     let buildId = selectedHistoryRun.trim().substring(3,14);
+    
     historyRuns.forEach(r => {
-      console.log(r.buildId);
-      console.log(buildId);
-      if(String.toString(r.buildId) === buildId){
-        console.log(r.timestamp);
+      if(r.build_id == buildId){
+        let content = `Timestamp: ${r.timestamp}\nName: ${r.instance_name}\n`;
+        extraInfo.appendChild(document.createTextNode(content));
+        if(r.build_success == 0){
+          extraInfo.appendChild(document.createTextNode(`Error message: ${r.error_message}`));
+        }
       }
     })
     
@@ -585,6 +587,7 @@
     width: 80%;
     background-color: #383838;
     height: 20%;
+    white-space: pre-wrap;
   }
 
   .error {
