@@ -1,7 +1,6 @@
 <script>
   import { onMount, tick } from "svelte";
-  import { run } from "svelte/internal";
-
+ 
   let basepath = "";
   let DOCKER;
   if(typeof DOCKER_RUN === 'undefined') {
