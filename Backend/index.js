@@ -97,7 +97,7 @@ app.post('/api/status', async (req, res) => {
   if(state.status === 'completed' && !req.body.localrun)
   {
     // store build to database
-    db.query('CREATE TABLE IF NOT EXISTS BUILDS (build_id BIGINT NOT NULL, timestamp TIMESTAMP, template_name VARCHAR(50), instance_name VARCHAR(50), build_success BOOL, error_message VARCHAR(50), PRIMARY KEY(build_id))');
+    db.query('CREATE TABLE IF NOT EXISTS BUILDS (build_id BIGINT NOT NULL, timestamp TIMESTAMP, template_name VARCHAR(500), instance_name VARCHAR(500), build_success BOOL, error_message VARCHAR(5000), PRIMARY KEY(build_id))');
     const buildId = state.buildId;
     const errorMessage = state.errorMessage;
     const instanceName = req.body.name; //getting info from front
