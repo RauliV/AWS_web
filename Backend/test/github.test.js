@@ -1,3 +1,4 @@
+/* eslint-disable no-invalid-this */
 /* eslint-disable no-undef */
 import chai from 'chai';
 import sinon from 'sinon';
@@ -81,5 +82,34 @@ describe('GitHub calls', function() {
         const templates = gitFactory.parseTemplates([{'name':'TEMPLATE-Test1'}, {'name': '34-fix-something'}, {'name': 'TEMPLATE-Test2'}]);
 
         expect(templates, ['TEMPLATE-Test1', 'TEMPLATE-Test2']);
+    });
+});
+
+describe('GitHub integration part', function() {
+    this.timeout(5000);
+    it('should return all branches', async function() {
+        const response = await gitFactory.getBranches();
+        expect(response.json.length).greaterThan(0);
+        for (const branch of response.json) {
+            expect(branch.name).to.exist;
+            expect(branch.commit).to.exist;
+            expect(branch.protected).to.exist;
+        }
+        expect(response.status).equal(200);
+        expect(response.statusText).equal('OK');
+    });
+    it('should return a branch description', async function() {
+        const response = await gitFactory.getBranchDesc('TEMPLATE-EC2');
+        expect(response.json.name).equal('desc.json');
+        expect(response.json.path).equal('desc.json');
+        expect(response.json.type).equal('file');
+        expect(response.status).equal(200);
+        expect(response.statusText).equal('OK');
+
+        const description = JSON.parse(atob(response.json.content)).description;
+        expect(description).equal('This template builds an EC2 instance.');
+        const parameters = JSON.parse(atob(response.json.content)).parameters;
+        expect(parameters[0].displayName).equal('Instance name');
+        expect(parameters[0].internalName).equal('RESOURCE_NAME');
     });
 });

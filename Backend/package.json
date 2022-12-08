@@ -21,7 +21,7 @@
   },
   "scripts": {
     "test": "mocha --exit",
-    "coverage": "npx c8 --all -r=html -r=text npm test"
+    "coverage": "npx c8 --include 'index.js' --include 'github.js' -r=html -r=text npm test"
   },
   "author": "",
   "license": "ISC",
