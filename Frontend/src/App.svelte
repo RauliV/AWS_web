@@ -334,10 +334,16 @@
       </button>
       <h2 id="history-view-header">Previously deployed packages</h2>
       <select size="10" id="history-view-select" bind:value = {selectedHistoryRun} on:change={onHistorySelectChange}>
-        {#each historyRuns as run}       
+        {#each historyRuns as run}
+        {#if run.build_success == 1}            
         <option>
-          {`Id: ${run.build_id} ---- Template: ${run.template_name} ---- Success: ${run.build_success}`};
-        </option>        
+          {`Id: ${run.build_id} -- Name: ${run.instance_name} -- ${run.template_name} -- Success`}
+        </option>
+        {:else} 
+        <option>
+          {`Id: ${run.build_id} -- Name: ${run.instance_name} -- ${run.template_name} -- Failure`}
+        </option>
+        {/if}     
         {/each}
       </select>
       <div id="history-view-extra">
