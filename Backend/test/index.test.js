@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 /* eslint-disable no-invalid-this */
 /* eslint-disable no-undef */
 import chai from 'chai';
@@ -7,8 +8,14 @@ import assert from 'assert';
 import app from '../index.js';
 import { indexFactory } from '../index.js';
 import { gitFactory } from '../github.js';
+import { workflowResponses } from './responses/workflows.js';
+import { noDbResponses } from './responses/noDbResponse.js';
 //import mysql from 'mysql';
 
+function sleep(ms) {
+    // eslint-disable-next-line no-promise-executor-return
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 const expect = chai.expect;
 
@@ -132,51 +139,89 @@ describe ('GET /api/history', function(){
 });
 */
 describe ('getStatus function', async function(){
-	this.timeout(5000);
+	this.timeout(10000);
 	beforeEach(() => {
         sandbox.restore();
     });
 
 
 	it('getStatus has a valid response', async function() {
+		// Do a new mock build
+		const buildOptions = {
+			package: 'TEMPLATE-EC2',
+			parameters: {
+				RESOURCE_NAME: 'BUILD TRIGGERED BY TEST',
+				AWS_REGION: 'eu-west-1',
+				AWS_ACCESS_KEY_ID: '123456789012345678901234567890',
+				AWS_SECRET_ACCESS_KEY: '123456789012345678901234567890'
+			},
+			mock: true,
+		};
+		const buildResponse = await request(app).post('/api/build').send(buildOptions);
+		expect(buildResponse.status).equal(200);
+
+		//Wait fo it to initialize
+		console.log('Initializing: sleeping for 4s..');
+		await sleep(4000);
+
 		const response = await indexFactory.getStatus();
-		expect(response.status).equal('completed');
-		expect(response.conclusion).to.be.oneOf(['failure', 'success']);
+		expect(response.status).to.be.oneOf(['completed', 'queued', 'in_progress']);
+		expect(response.stepNumber).to.be.a('number');
+		expect(response.stepCount).to.be.a('number');
+		expect(response.buildId).to.be.a('number');
 		if (response.conclusion === 'failure'){
 			expect(response.errorMessage).not.equal('');
 		} else {
 			expect(response.errorMessage).equal('');
 		}
 	});
+	it('getStatus has a valid response for successful run', async function() {
+		const fetchStub = sandbox.stub(indexFactory, 'fetchFunc').onCall(0).resolves(new Response(JSON.stringify(workflowResponses.dailyWorkflows)));
+		fetchStub.onCall(1).resolves(new Response(JSON.stringify(workflowResponses.jobsRunSuccess)));
+
+		const response = await indexFactory.getStatus();
+		expect(response.status).equal('completed');
+		expect(response.stepNumber).equal(0);
+		expect(response.stepCount).equal(11);
+		expect(response.errorMessage).equal('');
+		expect(response.buildId).equal(3630001795);
+		expect(response.conclusion).equal('success');
+	});
+	it('getStatus has a valid response for failed run', async function() {
+		const fetchStub = sandbox.stub(indexFactory, 'fetchFunc').onCall(0).resolves(new Response(JSON.stringify(workflowResponses.dailyWorkflows)));
+		fetchStub.onCall(1).resolves(new Response(JSON.stringify(workflowResponses.jobsRunFail)));
+
+		const response = await indexFactory.getStatus();
+		expect(response.status).equal('completed');
+		expect(response.stepNumber).equal(4);
+		expect(response.stepCount).equal(11);
+		expect(response.errorMessage).equal('Process completed with exit code 1. / line: 13');
+		expect(response.buildId).equal(3630321948);
+		expect(response.conclusion).equal('failure');
+	});
 });
 
 
-describe('POST /api/status (build started status from /api/build??)', async function() {
+describe('POST /api/status', async function() {
 	this.timeout(5000);
 	beforeEach(() => {
         sandbox.restore();
     });
 
-	const buildParameters = {
-		AWS_ACCESS_KEY_ID: 'These',
-		AWS_SECRET_ACCESS_KEY: 'don\'t',
-		AWS_REGION: 'matter for now (if these are not empty)'
-	};
-
-	it('Status query performed successfully', async function() {
-		const fetchStub = sandbox.stub(indexFactory, 'triggerBuild').resolves({status: 204});
-		const packageName = 'TEMPLATE-EC2';
-		const buildOptions = {
-			package: packageName,
-			parameters: buildParameters,
-		};
-
-		const response = await request(app).post('/api/build').send(buildOptions);
-		
-		assert(fetchStub.calledOnce);
-		expect(response.status).equal(200);
-		expect(response.headers).to.include.keys(['content-type']);
-		expect(response.headers['content-type']).to.include('application/json');
+	it('Status query performed successfully without db', async function() {
+		const buildOptions = {localrun: true};
+		const buildResponse = await request(app).post('/api/status').send(buildOptions);
+		expect(buildResponse.status).equal(200);
+		const json = buildResponse.body;
+		expect(json.status).to.be.oneOf(['completed', 'queued', 'in_progress']);
+		expect(json.stepNumber).to.be.a('number');
+		expect(json.stepCount).to.be.a('number');
+		expect(json.buildId).to.be.a('number');
+		if (json.conclusion === 'failure'){
+			expect(json.errorMessage).not.equal('');
+		} else {
+			expect(json.errorMessage).equal('');
+		}
 	});
 });
 
@@ -206,5 +251,27 @@ describe('POST /api/auth', function(){
 		expect(response.headers['access-control-allow-origin']).to.include('*');
 		expect(response.body).equal('Data: no-data');
 	});
+});
+
+describe('POST /api/history', function(){
+	
+	it('Should give set response when db is not in use', async function() {
+		const buildOptions = {localrun : true, buildId: 1};
+		const response = await request(app).post('/api/history').send(buildOptions);
+		expect(response.status).equal(200);
+		const json = response.body;
+		expect(json).to.eql(noDbResponses.noDbResponse[0]);
 	});
+});
+
+describe('GET /api/history', function(){
+	
+	it('Should give set response when db is not in use', async function() {
+		const buildOptions = {localrun : true};
+		const response = await request(app).get('/api/history').send(buildOptions);
+		expect(response.status).equal(200);
+		const json = response.body;
+		expect(json).to.eql(noDbResponses.noDbResponse);
+	});
+});
 
