@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { gitFactory } from './github.js';
 import 'node-fetch';
 import fetch from 'node-fetch';
-import cors from 'cors';
+//import cors from 'cors';
 import mysql from 'mysql';
 import { noDbResponses } from './test/responses/noDbResponse.js';
 

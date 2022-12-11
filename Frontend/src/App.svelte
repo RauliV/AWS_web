@@ -237,6 +237,12 @@
           );
           logMessage(`Error: ${state.errorMessage}`, "salmon");
         }
+        let path = basepath + "/api/history";
+        let response = await fetch(path);
+        if(response.status === 200){  
+          let json = await response.json();
+          historyRuns = json;
+        }
         return;
       } else if (
         lastStatus === state.status &&
