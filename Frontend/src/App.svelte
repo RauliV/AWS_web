@@ -1,6 +1,6 @@
 <script>
   import { onMount, tick } from "svelte";
-
+ 
   let basepath = "";
   let DOCKER;
   if(typeof DOCKER_RUN === 'undefined') {
@@ -43,6 +43,11 @@
   let waitingForActionToResolve = false;
   // bool for mock build checkbox state
   let mockAction = false;
+
+  // Store previous runs to show in history view
+  let historyRuns = [];
+  let selectedHistoryRun = "";
+
   const update = () => {
     if (updating) {
       var buildName = dynamicParams["RESOURCE_NAME"]
@@ -168,6 +173,33 @@
     waitingForActionToResolve = false;
   }
 
+
+  onMount(async () =>{
+    let path = basepath + "/api/history";
+    let response = await fetch(path);
+    if(response.status === 200){  
+      let json = await response.json();
+      historyRuns = json;
+      
+  }});
+
+  const onHistorySelectChange = () => {
+    let extraInfo = document.getElementById('history-view-extra');
+    extraInfo.innerHTML = ''; //clear previous content
+    let buildId = selectedHistoryRun.trim().substring(3,14);
+    
+    historyRuns.forEach(r => {
+      if(r.build_id == buildId){
+        let content = `Timestamp: ${r.timestamp}\nName: ${r.instance_name}\n`;
+        extraInfo.appendChild(document.createTextNode(content));
+        if(r.build_success == 0){
+          extraInfo.appendChild(document.createTextNode(`Error message: ${r.error_message}`));
+        }
+      }
+    })
+    
+  }
+
   async function getBuildStatus(buildName) {
     if (latestStatus === "Started") {
       await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -204,6 +236,12 @@
             "salmon"
           );
           logMessage(`Error: ${state.errorMessage}`, "salmon");
+        }
+        let path = basepath + "/api/history";
+        let response = await fetch(path);
+        if(response.status === 200){  
+          let json = await response.json();
+          historyRuns = json;
         }
         return;
       } else if (
@@ -300,6 +338,24 @@
       <button id="start-button" on:click={startNewEnvironment}>
         Start new environment
       </button>
+      <h2 id="history-view-header">Previously deployed packages</h2>
+      <select size="10" id="history-view-select" bind:value = {selectedHistoryRun} on:change={onHistorySelectChange}>
+        {#each historyRuns as run}
+        {#if run.build_success == 1}            
+        <option>
+          {`Id: ${run.build_id} -- Name: ${run.instance_name} -- ${run.template_name} -- Success`}
+        </option>
+        {:else} 
+        <option>
+          {`Id: ${run.build_id} -- Name: ${run.instance_name} -- ${run.template_name} -- Failure`}
+        </option>
+        {/if}     
+        {/each}
+      </select>
+      <div id="history-view-extra">
+
+      </div>
+
     </div>
 
     <div class="view-column">
@@ -498,7 +554,8 @@
   #start-button {
     background-color: #2bb368;
     width: 50%;
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 50px;
   }
 
   #start-button:hover {
@@ -525,6 +582,25 @@
   #clearlogbtn:hover {
     border-color: #36a8f4;
   }
+
+  #history-view-header{
+    margin: 20px;
+  }
+
+  #history-view-select{
+    width: 80%;
+    background-color: #383838;
+    color: white;
+  }
+
+  #history-view-extra{
+    margin: 2% auto;
+    width: 80%;
+    background-color: #383838;
+    height: 20%;
+    white-space: pre-wrap;
+  }
+
   .error {
     display: block;
     margin-left: auto;
